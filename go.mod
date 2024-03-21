@@ -1,0 +1,3 @@
+module DENTAL-CLINIC
+
+go 1.17
