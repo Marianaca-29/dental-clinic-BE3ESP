@@ -24,6 +24,7 @@ CREATE TABLE appointments (
     id_dentist INTEGER,
     date VARCHAR(10),
     time VARCHAR(8),
+    description VARCHAR(255),
     FOREIGN KEY (id_patient) REFERENCES patients(id_patient),
     FOREIGN KEY (id_dentist) REFERENCES dentists(id_dentist)
 );
