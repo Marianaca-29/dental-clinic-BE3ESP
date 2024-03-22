@@ -17,7 +17,7 @@ type StoreInterface interface {
 	CreatePatient (patient domain.Patient) (*domain.Patient, error) // POST: Agregar paciente
 	GetPatientById (id int) (*domain.Patient, error) // GET: Traer paciente por ID
 	UpdatePatient (patient domain.Patient) (*domain.Patient, error) // PUT: Actualizar paciente
-	UpdatePatientField(id int, field string, value string) (*domain.Patient, error) // PATCH: Actualizar un campo específico del paciente
+	UpdatePatientField (id int, field string, value string) (*domain.Patient, error) // PATCH: Actualizar un campo específico del paciente
 	DeletePatient (id int) (error) // DELETE: Eliminar paciente
 	GetPatientIdByDNI (DNI string) (int, error) // GET: Traer paciente por DNI
 
