@@ -1,4 +1,5 @@
 package domain
+
 // Registrar apellido, nombre y matrícula de los mismos
 type Dentist struct {
 	ID        int    `json:"id"`
