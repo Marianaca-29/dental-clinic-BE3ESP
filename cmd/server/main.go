@@ -1,11 +1,12 @@
 package main
 
 import (
+	"DENTAL-CLINIC/internal/dentist"
+	"DENTAL-CLINIC/pkg/store"
+	"DENTAL-CLINIC/cmd/server/handler"
 	"database/sql"
 	"log"
-
-	// "DENTAL-CLINIC/pkg/store"
-
+	"github.com/gin-gonic/gin"
 	_ "github.com/go-sql-driver/mysql"
 )
 
@@ -22,5 +23,20 @@ func main() {
 		log.Fatal(errPing)
 	}
 
-	//storage := store.NewSqlStore(db)
+	storage := store.NewSqlStore(db)
+	repo := dentist.NewRepository(storage)
+	service := dentist.NewService(repo)
+	dentistHandler := handler.NewDentistHandler(service)
+
+	r := gin.Default()
+
+	r.GET("/ping", func(c *gin.Context) { c.String(200, "pong") })
+	dentist := r.Group("/dentists")
+	{
+		dentist.GET(":id", dentistHandler.GetByID())
+		dentist.POST("", dentistHandler.Post())
+		//Completar otros 
+	}
+
+	r.Run(":8080")
 }
