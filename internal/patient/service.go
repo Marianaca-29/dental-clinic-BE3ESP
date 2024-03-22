@@ -39,14 +39,26 @@ func (s *service) GetPatientById (id int) (*domain.Patient, error) {
 }
 
 func (s *service) UpdatePatient (patient domain.Patient) (*domain.Patient, error) {
-	return nil, nil
+	updatedPatient, err := s.repository.UpdatePatient(patient)
+	if err != nil {
+		return nil, err
+	}
+	return updatedPatient, nil
 }
 
 func (s *service) UpdatePatientField (id int, field string, value string) (*domain.Patient, error) {
-	return nil, nil
+	updatedPatient, err := s.repository.UpdatePatientField(id, field, value)
+	if err != nil {
+		return nil, err
+	}
+	return updatedPatient, nil
 }
 
 func (s *service) DeletePatient (id int) (error) {
+	err := s.repository.DeletePatient(id)
+	if err != nil {
+		return err
+	}
 	return nil
 }
 

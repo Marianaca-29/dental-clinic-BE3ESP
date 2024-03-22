@@ -42,13 +42,25 @@ func (r *repository) GetPatientById (id int) (*domain.Patient, error) {
 }
 
 func (r *repository) UpdatePatient (patient domain.Patient) (*domain.Patient, error) {
-	return nil, nil
+	updatedPatient, err := r.storage.UpdatePatient(patient)
+	if err != nil {
+		return nil, err
+	}
+	return updatedPatient, nil
 }
 
 func (r *repository) UpdatePatientField (id int, field string, value string) (*domain.Patient, error){
-	return nil, nil
+	updatedPatient, err := r.storage.UpdatePatientField(id, field, value)
+    if err != nil {
+        return nil, err
+    }
+    return updatedPatient, nil
 }
 
 func (r *repository) DeletePatient (id int) (error) {
+	err := r.storage.DeletePatient(id)
+	if err != nil {
+		return err
+	}
 	return nil
 }
