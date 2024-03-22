@@ -11,6 +11,7 @@ type StoreInterface interface {
 	UpdateDentist (dentist domain.Dentist) (*domain.Dentist, error)
 	UpdateDentistField (dentist domain.Dentist) (*domain.Dentist, error)
 	DeleteDentist (id int) (error)
+	GetDentistIdByLicense (license string) (int, error)
 
 	// Métodos para pacientes:
 	CreatePatient (patient domain.Patient) (*domain.Patient, error)
@@ -18,6 +19,7 @@ type StoreInterface interface {
 	UpdatePatient (patient domain.Patient) (*domain.Patient, error)
 	UpdatePatientField (patient domain.Patient) (*domain.Patient, error)
 	DeletePatient (id int) (error)
+	GetPatientIdByDNI (DNI string) (int, error)
 
 	// Métodos para turnos:
 	CreateAppointment (appointment domain.Appointment) (*domain.Appointment, error)
@@ -25,6 +27,6 @@ type StoreInterface interface {
 	UpdateAppointment (appointment domain.Appointment) (*domain.Appointment, error)
 	UpdateAppointmentField (appointment domain.Appointment) (*domain.Appointment, error)
 	DeleteAppointment (id int) (error)
-	CreateAppointmentByDNIAndLicense (DNI int, license string, appointment domain.Appointment) (*domain.Appointment, error)
-	GetAppointmentByDNI (DNI int) (*domain.Appointment, error)
+	CreateAppointmentByDNIAndLicense (DNI string, license string, appointment domain.Appointment) (*domain.Appointment, error)
+	GetAppointmentsByDNI (DNI string) ([]domain.Appointment, error)
 }
