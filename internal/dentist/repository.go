@@ -42,3 +42,13 @@ func (r *Repository) Create(d domain.Dentist) (domain.Dentist, error) {
 	}
 	return *dent, nil
 }
+
+// Completar
+func (r *Repository) Delete(id int) error {
+
+	return nil
+}
+
+func (r *Repository) Update(id int, p domain.Dentist) (domain.Dentist, error) {
+	return p, nil
+}
