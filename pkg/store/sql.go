@@ -3,6 +3,7 @@ package store
 import (
 	"DENTAL-CLINIC/internal/domain"
 	"database/sql"
+	"errors"
 )
 
 type sqlStore struct {
@@ -17,16 +18,16 @@ func NewSqlStore(db *sql.DB) StoreInterface {
 
 // Métodos para dentistas:
 
-func (s *sqlStore) CreateDentist (dentist domain.Dentist) (*domain.Dentist, error) {
+func (s *sqlStore) CreateDentist(dentist domain.Dentist) (*domain.Dentist, error) {
 	query := "INSERT INTO dentists (first_name, last_name, license) VALUES (?, ?, ?)"
 
 	stmt, err := s.db.Prepare(query)
-	if (err != nil) {
+	if err != nil {
 		return nil, err
 	}
 
 	res, err := stmt.Exec(dentist.FirstName, dentist.LastName, dentist.License)
-	if (err != nil) {
+	if err != nil {
 		return nil, err
 	}
 
@@ -41,8 +42,8 @@ func (s *sqlStore) CreateDentist (dentist domain.Dentist) (*domain.Dentist, erro
 	return &dentist, nil
 }
 
-func (s *sqlStore) GetDentistById (id int) (*domain.Dentist, error) {
-	query:= "SELECT * FROM dentists WHERE id_dentist = ?"
+func (s *sqlStore) GetDentistById(id int) (*domain.Dentist, error) {
+	query := "SELECT * FROM dentists WHERE id_dentist = ?"
 	row := s.db.QueryRow(query, id)
 
 	var dentist domain.Dentist
@@ -54,89 +55,66 @@ func (s *sqlStore) GetDentistById (id int) (*domain.Dentist, error) {
 	return &dentist, nil
 }
 
-func (s *sqlStore) UpdateDentist (dentist domain.Dentist) (*domain.Dentist, error) {
+func (s *sqlStore) UpdateDentist(dentist domain.Dentist) (*domain.Dentist, error) {
 	query := "UPDATE dentists SET firts_name = ?, last_name = ?, license = ? WHERE id_dentist = ?"
 
 	stmt, err := s.db.Prepare(query)
-	if (err != nil) {
+	if err != nil {
 		return nil, err
 	}
 
 	res, err := stmt.Exec(dentist.FirstName, dentist.LastName, dentist.License, dentist.ID)
-	if (err != nil) {
+	if err != nil {
 		return nil, err
 	}
 
 	rowsAffected, err := res.RowsAffected()
 	if err != nil {
 		return nil, err
-	} else if (rowsAffected == 0) {
+	} else if rowsAffected == 0 {
 		return nil, err
 	}
 
 	query = "SELECT * FROM dentists WHERE id_dentist = ?"
-    row := s.db.QueryRow(query, dentist.ID)
+	row := s.db.QueryRow(query, dentist.ID)
 
-    var updatedDentist domain.Dentist
-    err = row.Scan(&updatedDentist.ID, &updatedDentist.FirstName, &updatedDentist.LastName, &updatedDentist.License)
-    if err != nil {
-        return nil, err
-    }
+	var updatedDentist domain.Dentist
+	err = row.Scan(&updatedDentist.ID, &updatedDentist.FirstName, &updatedDentist.LastName, &updatedDentist.License)
+	if err != nil {
+		return nil, err
+	}
 
 	return &updatedDentist, nil
 }
 
-func (s *sqlStore) UpdateDentistField(dentist domain.Dentist) (*domain.Dentist, error) {
-    // Definir la consulta base y los argumentos
-    query := "UPDATE dentists SET "
-    args := []interface{}{}
+func (s *sqlStore) UpdateDentistField(id int, field string, value string) (*domain.Dentist, error) {
+	query := "UPDATE dentists SET " + field + " = ? WHERE id_dentist = ?"
 
-    // Actualizar el campo FirstName si está presente en el dentista proporcionado
-    if dentist.FirstName != "" {
-        query += "first_name = ? "
-        args = append(args, dentist.FirstName)
-    }
+	stmt, err := s.db.Prepare(query)
+	if err != nil {
+		return nil, err
+	}
 
-    // Actualizar el campo LastName si está presente en el dentista proporcionado
-    if dentist.LastName != "" {
-        if len(args) > 0 {
-            query += ", "
-        }
-        query += "last_name = ? "
-        args = append(args, dentist.LastName)
-    }
+	res, err := stmt.Exec(value, id)
+	if err != nil {
+		return nil, err
+	}
+	rowsAffected, err := res.RowsAffected()
+	if err != nil {
+		return nil, err
+	} else if rowsAffected == 0 {
+		return nil, errors.New("ninguna fila fue cambiada")
+	}
 
-    // Agregar la condición WHERE
-    query += "WHERE id_dentist = ?"
-    args = append(args, dentist.ID)
+	updatedDentist, err := s.GetDentistById(id)
+	if err != nil {
+		return nil, err
+	}
 
-    // Preparar la consulta
-    stmt, err := s.db.Prepare(query)
-    if err != nil {
-        return nil, err
-    }
-
-    // Ejecutar la consulta
-    _, err = stmt.Exec(args...)
-    if err != nil {
-        return nil, err
-    }
-
-    // Consultar el dentista actualizado
-    query = "SELECT id_dentist, first_name, last_name, license FROM dentists WHERE id_dentist = ?"
-    row := s.db.QueryRow(query, dentist.ID)
-
-    // Escanear los resultados en una estructura de dentista
-    var updatedDentist domain.Dentist
-    err = row.Scan(&updatedDentist.ID, &updatedDentist.FirstName, &updatedDentist.LastName, &updatedDentist.License)
-    if err != nil {
-        return nil, err
-    }
-
-    return &updatedDentist, nil
+	return updatedDentist, nil
 }
 
-func (s *sqlStore) DeleteDentist (id int) (error) {
+func (s *sqlStore) DeleteDentist(id int) error {
 	query := "DELETE FROM dentists WHERE id_dentist = ?"
 
 	stmt, err := s.db.Prepare(query)
@@ -152,15 +130,15 @@ func (s *sqlStore) DeleteDentist (id int) (error) {
 	rowsAffected, err := res.RowsAffected()
 	if err != nil {
 		return err
-	} else if (rowsAffected == 0) {
+	} else if rowsAffected == 0 {
 		return err
 	}
 
 	return nil
 }
 
-func (s *sqlStore) GetDentistIdByLicense (license string) (int, error) {
-	query:= "SELECT id_dentist FROM dentists WHERE license = ?"
+func (s *sqlStore) GetDentistIdByLicense(license string) (int, error) {
+	query := "SELECT id_dentist FROM dentists WHERE license = ?"
 	row := s.db.QueryRow(query, license)
 
 	var id int
@@ -172,22 +150,104 @@ func (s *sqlStore) GetDentistIdByLicense (license string) (int, error) {
 	return id, nil
 }
 
-
 // Métodos para pacientes:
 
-func (s *sqlStore) CreatePatient (patient domain.Patient) (*domain.Patient, error) {
-	return nil, nil
+func (s *sqlStore) CreatePatient(patient domain.Patient) (*domain.Patient, error) {
+	query := "INSERT INTO patients (first_name, last_name, address, dni, registration_date) VALUES (?, ?, ?, ?, ?)"
+
+	stmt, err := s.db.Prepare(query)
+	if err != nil {
+		return nil, err
+	}
+
+	res, err := stmt.Exec(patient.FirstName, patient.LastName, patient.Address, patient.DNI, patient.RegistrationDate)
+	if err != nil {
+		return nil, err
+	}
+
+	_, err = res.RowsAffected()
+	if err != nil {
+		return nil, err
+	}
+
+	lastID, _ := res.LastInsertId()
+	patient.ID = int(lastID)
+
+	return &patient, nil
 }
-func (s *sqlStore) GetPatientById (id int) (*domain.Patient, error) {
-	return nil, nil
+
+func (s *sqlStore) GetPatientById(id int) (*domain.Patient, error) {
+	query := "SELECT * FROM patients WHERE id_patient = ?"
+	row := s.db.QueryRow(query, id)
+
+	var patient domain.Patient
+	err := row.Scan(&patient.ID, &patient.FirstName, &patient.LastName, &patient.Address, &patient.DNI, &patient.RegistrationDate)
+	if err != nil {
+		return nil, err
+	}
+
+	return &patient, nil
 }
-func (s *sqlStore) UpdatePatient (patient domain.Patient) (*domain.Patient, error) {
-	return nil, nil
+
+func (s *sqlStore) UpdatePatient(patient domain.Patient) (*domain.Patient, error) {
+	query := "UPDATE patients SET first_name = ?, last_name = ?, address = ?, dni = ?, registration_date = ? WHERE id_patient = ?"
+
+	stmt, err := s.db.Prepare(query)
+	if err != nil {
+		return nil, err
+	}
+
+	res, err := stmt.Exec(patient.FirstName, patient.LastName, patient.Address, patient.DNI, patient.RegistrationDate, patient.ID)
+	if err != nil {
+		return nil, err
+	}
+
+	rowsAffected, err := res.RowsAffected()
+	if err != nil {
+		return nil, err
+	} else if rowsAffected == 0 {
+		return nil, errors.New("no se actualizaron filas")
+	}
+
+	query = "SELECT * FROM patients WHERE id_patient = ?"
+	row := s.db.QueryRow(query, patient.ID)
+
+	var updatedPatient domain.Patient
+	err = row.Scan(&updatedPatient.ID, &updatedPatient.FirstName, &updatedPatient.LastName, &updatedPatient.Address, &updatedPatient.DNI, &updatedPatient.RegistrationDate)
+	if err != nil {
+		return nil, err
+	}
+	return &updatedPatient, nil
 }
-func (s *sqlStore) UpdatePatientField (patient domain.Patient) (*domain.Patient, error) {
-	return nil, nil
-} 
-func (s *sqlStore) DeletePatient (id int) (error) {
+
+func (s *sqlStore) UpdatePatientField(id int, field string, value string) (*domain.Patient, error) {
+	query := "UPDATE patients SET " + field + " = ? WHERE id_patient = ?"
+
+	stmt, err := s.db.Prepare(query)
+	if err != nil {
+		return nil, err
+	}
+
+	res, err := stmt.Exec(value, id)
+	if err != nil {
+		return nil, err
+	}
+	rowsAffected, err := res.RowsAffected()
+	if err != nil {
+		return nil, err
+	} else if rowsAffected == 0 {
+		return nil, errors.New("ninguna fila fue cambiada")
+	}
+
+	updatedPatient, err := s.GetPatientById(id)
+	if err != nil {
+		return nil, err
+	}
+
+	return updatedPatient, nil
+}
+
+func (s *sqlStore) DeletePatient(id int) error {
 	query := "DELETE FROM patients WHERE id_patient = ?"
 
 	stmt, err := s.db.Prepare(query)
@@ -203,19 +263,19 @@ func (s *sqlStore) DeletePatient (id int) (error) {
 	rowsAffected, err := res.RowsAffected()
 	if err != nil {
 		return err
-	} else if (rowsAffected == 0) {
+	} else if rowsAffected == 0 {
 		return err
 	}
 
 	return nil
 }
 
-func (s *sqlStore) GetPatientIdByDNI (DNI string) (int, error) {
-	query:= "SELECT id_patient FROM patients WHERE dni = ?"
+func (s *sqlStore) GetPatientIdByDNI(DNI string) (int, error) {
+	query := "SELECT id_patient FROM patients WHERE dni = ?"
 	row := s.db.QueryRow(query, DNI)
 
 	var id int
-	err := row.Scan(id)
+	err := row.Scan(&id)
 	if err != nil {
 		return 0, err
 	}
@@ -225,20 +285,100 @@ func (s *sqlStore) GetPatientIdByDNI (DNI string) (int, error) {
 
 // Métodos para turnos:
 
-func (s *sqlStore) CreateAppointment (appointment domain.Appointment) (*domain.Appointment, error) {
-	return nil, nil
-}
-func (s *sqlStore) GetAppointmentById (id int) (*domain.Appointment, error) {
-	return nil, nil
-}
-func (s *sqlStore) UpdateAppointment (appointment domain.Appointment) (*domain.Appointment, error) {
-	return nil, nil
-}
-func (s *sqlStore) UpdateAppointmentField (appointment domain.Appointment) (*domain.Appointment, error) {
-	return nil, nil
+func (s *sqlStore) CreateAppointment(appointment domain.Appointment) (*domain.Appointment, error) {
+	query := "INSERT INTO appointments (id_dentist, id_patient, date, time, description) VALUES (?, ?, ?, ?, ?)"
+
+	stmt, err := s.db.Prepare(query)
+	if err != nil {
+		return nil, err
+	}
+
+	res, err := stmt.Exec(appointment.IdDentist, appointment.IdPatient, appointment.Date, appointment.Time, appointment.Description)
+	if err != nil {
+		return nil, err
+	}
+
+	_, err = res.RowsAffected()
+	if err != nil {
+		return nil, err
+	}
+
+	lastID, _ := res.LastInsertId()
+	appointment.ID = int(lastID)
+
+	return &appointment, nil
 }
 
-func (s *sqlStore) DeleteAppointment (id int) (error) {
+func (s *sqlStore) GetAppointmentById(id int) (*domain.Appointment, error) {
+	query := "SELECT * FROM appointments WHERE id_appointment = ?"
+	row := s.db.QueryRow(query, id)
+
+	var appointment domain.Appointment
+	err := row.Scan(&appointment.ID, &appointment.IdDentist, &appointment.IdPatient, &appointment.Date, &appointment.Time, &appointment.Description)
+	if err != nil {
+		return nil, err
+	}
+
+	return &appointment, nil
+}
+
+func (s *sqlStore) UpdateAppointment(appointment domain.Appointment) (*domain.Appointment, error) {
+	query := "UPDATE appointments SET id_dentist = ?, id_patient = ?, date = ?, time = ?, description = ? WHERE id_appointment = ?"
+
+	stmt, err := s.db.Prepare(query)
+	if err != nil {
+		return nil, err
+	}
+
+	res, err := stmt.Exec(appointment.IdDentist, appointment.IdPatient, appointment.Date, appointment.Time, appointment.Description, appointment.ID)
+	if err != nil {
+		return nil, err
+	}
+
+	rowsAffected, err := res.RowsAffected()
+	if err != nil {
+		return nil, err
+	} else if rowsAffected == 0 {
+		return nil, errors.New("ninguna fila fue actualizada")
+	}
+
+	updatedAppointment, err := s.GetAppointmentById(appointment.ID)
+	if err != nil {
+		return nil, err
+	}
+
+	return updatedAppointment, nil
+}
+
+func (s *sqlStore) UpdateAppointmentField(id int, field string, value string) (*domain.Appointment, error) {
+	query := "UPDATE appointments SET " + field + " = ? WHERE id_appointment = ?"
+
+	stmt, err := s.db.Prepare(query)
+	if err != nil {
+		return nil, err
+	}
+	defer stmt.Close()
+
+	res, err := stmt.Exec(value, id)
+	if err != nil {
+		return nil, err
+	}
+	rowsAffected, err := res.RowsAffected()
+	if err != nil {
+		return nil, err
+	} else if rowsAffected == 0 {
+		return nil, errors.New("ninguna fila fue cambiada")
+	}
+
+	updatedAppointment, err := s.GetAppointmentById(id)
+	if err != nil {
+		return nil, err
+	}
+
+	return updatedAppointment, nil
+}
+
+func (s *sqlStore) DeleteAppointment(id int) error {
 	query := "DELETE FROM appointments WHERE id_appointment = ?"
 
 	stmt, err := s.db.Prepare(query)
@@ -250,38 +390,36 @@ func (s *sqlStore) DeleteAppointment (id int) (error) {
 	if err != nil {
 		return err
 	}
-
 	rowsAffected, err := res.RowsAffected()
 	if err != nil {
 		return err
-	} else if (rowsAffected == 0) {
+	} else if rowsAffected == 0 {
 		return err
 	}
-
 	return nil
 }
 
-func (s *sqlStore) CreateAppointmentByDNIAndLicense (DNI string, license string, appointment domain.Appointment) (*domain.Appointment, error) {
-	
+func (s *sqlStore) CreateAppointmentByDNIAndLicense(DNI string, license string, appointment domain.Appointment) (*domain.Appointment, error) {
+
 	idDentist, err := s.GetDentistIdByLicense(license)
 	if err != nil || idDentist == 0 {
 		return nil, err
-	} 
+	}
 
 	idPatient, err := s.GetPatientIdByDNI(DNI)
 	if err != nil || idPatient == 0 {
 		return nil, err
-	} 
+	}
 
 	query := "INSERT INTO appointments (id_patient, id_dentist, date, time) VALUES (?, ?, ?, ?)"
 
 	stmt, err := s.db.Prepare(query)
-	if (err != nil) {
+	if err != nil {
 		return nil, err
 	}
 
 	res, err := stmt.Exec(idDentist, idPatient, appointment.Date, appointment.Time)
-	if (err != nil) {
+	if err != nil {
 		return nil, err
 	}
 
@@ -296,12 +434,12 @@ func (s *sqlStore) CreateAppointmentByDNIAndLicense (DNI string, license string,
 	return &appointment, nil
 }
 
-func (s *sqlStore) GetAppointmentsByDNI (DNI string) ([]domain.Appointment, error) {
+func (s *sqlStore) GetAppointmentsByDNI(DNI string) ([]domain.Appointment, error) {
 
 	idPatient, err := s.GetPatientIdByDNI(DNI)
 	if err != nil || idPatient == 0 {
 		return nil, err
-	} 
+	}
 
 	query := "SELECT * FROM appointments WHERE id_patient = ?"
 	rows, err := s.db.Query(query, idPatient)
@@ -322,4 +460,3 @@ func (s *sqlStore) GetAppointmentsByDNI (DNI string) ([]domain.Appointment, erro
 
 	return listAppointments, nil
 }
-
