@@ -16,13 +16,13 @@ type patientHandler struct {
 	service patient.IService
 }
 
-func NewProductHandler(service patient.IService) *patientHandler {
+func NewPatientHandler(service patient.IService) *patientHandler {
 	return &patientHandler{
 		service: service,
 	}
 }
 
-func (h *patientHandler) CreatePatient() gin.HandlerFunc {
+func (h *patientHandler) Post() gin.HandlerFunc {
 	return func(c *gin.Context) { 
 		var patient domain.Patient
 		err := c.ShouldBindJSON(&patient)
@@ -65,7 +65,7 @@ func (h *patientHandler) GetPatientById() gin.HandlerFunc {
 	}
 }
 
-func (h *patientHandler) UpdatePatient() gin.HandlerFunc {
+func (h *patientHandler) Put() gin.HandlerFunc {
 	return func(c *gin.Context) { 
 		var patient domain.Patient
 		if err := c.ShouldBindJSON(&patient); err != nil {
@@ -82,7 +82,7 @@ func (h *patientHandler) UpdatePatient() gin.HandlerFunc {
 	}
 }
 
-func (h *patientHandler) UpdatePatientField() gin.HandlerFunc {
+func (h *patientHandler) Patch() gin.HandlerFunc {
 	return func(c *gin.Context) { 
 		id := c.Param("id")
 		field := c.Param("field")
@@ -104,7 +104,7 @@ func (h *patientHandler) UpdatePatientField() gin.HandlerFunc {
 	}
 }
 
-func (h *patientHandler) DeletePatient() gin.HandlerFunc {
+func (h *patientHandler) Delete() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		id := c.Param("id")
 		patientID, err := strconv.Atoi(id)
@@ -118,6 +118,6 @@ func (h *patientHandler) DeletePatient() gin.HandlerFunc {
 			return
 		}
 
-		web.Success(c, http.StatusOK, gin.H{"message": "patient deleted"})
+		web.Success(c, http.StatusOK, gin.H{"message": "patiente borrado"})
 	}
 }

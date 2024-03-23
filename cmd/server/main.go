@@ -2,6 +2,7 @@ package main
 
 import (
 	"DENTAL-CLINIC/internal/dentist"
+	"DENTAL-CLINIC/internal/patient"
 	"DENTAL-CLINIC/pkg/store"
 	"DENTAL-CLINIC/cmd/server/handler"
 	"database/sql"
@@ -24,19 +25,35 @@ func main() {
 	}
 
 	storage := store.NewSqlStore(db)
-	repo := dentist.NewRepository(storage)
-	service := dentist.NewService(repo)
-	dentistHandler := handler.NewDentistHandler(service)
 
+	dentistRepo := dentist.NewRepository(storage)
+	patientRepo := patient.NewRepository(storage)
+
+	dentistService := dentist.NewService(dentistRepo)
+	patientService := patient.NewService(patientRepo)
+	dentistHandler := handler.NewDentistHandler(dentistService)
+	patientHandler := handler.NewPatientHandler(patientService)
+	
 	r := gin.Default()
 
 	r.GET("/ping", func(c *gin.Context) { c.String(200, "pong") })
-	dentist := r.Group("/dentists")
+	dentists := r.Group("/dentists")
 	{
-		dentist.GET(":id", dentistHandler.GetByDentistID())
-		dentist.POST("", dentistHandler.Post())
+		dentists.GET(":id", dentistHandler.GetByDentistID())
+		dentists.POST("", dentistHandler.Post())
 		//Completar otros 
 	}
+	patients := r.Group("/patients")
+	{
+		
+		patients.GET(":id", patientHandler.GetPatientById())
+		patients.POST("", patientHandler.Post())
+		patients.PATCH(":id", patientHandler.Put())
+		patients.PUT(":id", patientHandler.Patch())
+		patients.DELETE(":id", patientHandler.Delete())
+		
+	}
+
 
 	r.Run(":8080")
 }

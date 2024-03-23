@@ -9,12 +9,12 @@ import(
 	"strconv"
 )
 type dentistHandler struct {
-	s dentist.IService
+	service dentist.IService
 }
 
-func NewDentistHandler(s dentist.IService) *dentistHandler {
+func NewDentistHandler(service dentist.IService) *dentistHandler {
 	return &dentistHandler{
-		s: s,
+		service: service,
 	}
 }
 
@@ -26,7 +26,7 @@ func (h *dentistHandler) GetByDentistID() gin.HandlerFunc {
 			web.Failure(c, 400, errors.New("id no válido"))
 			return
 		}
-		product, err := h.s.GetDentistById(id)
+		product, err := h.service.GetDentistById(id)
 		if err != nil {
 			web.Failure(c, 404, errors.New("product no encontrado"))
 			return
@@ -59,7 +59,7 @@ func (h *dentistHandler) Post() gin.HandlerFunc {
 			web.Failure(c, 400, err)
 			return
 		}
-		p, err := h.s.CreateDentist(dentist)
+		p, err := h.service.CreateDentist(dentist)
 		if err != nil {
 			web.Failure(c, 400, err)
 			return
