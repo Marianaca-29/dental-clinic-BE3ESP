@@ -1,6 +1,8 @@
 package dentist
 
 import (
+	"fmt"
+	
 	"DENTAL-CLINIC/internal/domain"
 	"DENTAL-CLINIC/pkg/store"
 	"DENTAL-CLINIC/pkg/web"
@@ -36,6 +38,7 @@ func (r *repository) CreateDentist(d domain.Dentist) (*domain.Dentist, error) {
 	}
 	return dent, nil
 }
+
 func (r *repository) GetDentistById(id int) (*domain.Dentist, error) {
 	dentistResponse, err := r.storage.GetDentistById(id)
 	if err != nil {
@@ -45,15 +48,22 @@ func (r *repository) GetDentistById(id int) (*domain.Dentist, error) {
 	return dentistResponse, nil
 }
 
-
 // Completar
-func (r *repository) DeleteDentist(id int) error {
-	return nil
-}
-
 func (r *repository) UpdateDentist(dentist domain.Dentist) (*domain.Dentist, error) {
 	return nil, nil
 }
 func (r *repository) UpdateDentistField(id int, p domain.Dentist) (*domain.Dentist, error) {
 	return nil, nil
+}
+
+func (r *repository) DeleteDentist(id int) error {
+	_, err := r.storage.GetDentistById(id)
+	if err != nil {
+		return web.NewBadRequestApiError(fmt.Sprintf("/nNo existe un dentista con el id %d", id))
+	}
+	errDelete := r.storage.DeleteDentist(id)
+	if errDelete != nil {
+		return errDelete
+	}
+	return nil
 }

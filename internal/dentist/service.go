@@ -35,13 +35,17 @@ func (s *Service) CreateDentist(p domain.Dentist) (*domain.Dentist, error) {
 }
 
 // completar
-func (s *Service) DeleteDentist(id int) error {
-	return nil
-}
-
 func (s *Service) UpdateDentist(dentist domain.Dentist) (*domain.Dentist, error){
 	return nil, nil
 }
 func (s *Service) UpdateDentistField(id int, p domain.Dentist) (*domain.Dentist, error) {
 	return nil, nil
+}
+
+func (s *Service) DeleteDentist(id int) error {
+	err := s.Repository.DeleteDentist(id)
+	if err != nil {
+		return err
+	}
+	return nil
 }

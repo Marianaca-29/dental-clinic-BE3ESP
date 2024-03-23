@@ -1,12 +1,15 @@
 package handler
 
 import(
+	"errors"
+	"strconv"
+	"net/http"
+	"os"
+
 	"DENTAL-CLINIC/internal/dentist"
 	"DENTAL-CLINIC/internal/domain"
 	"DENTAL-CLINIC/pkg/web"
 	"github.com/gin-gonic/gin"
-	"errors"
-	"strconv"
 )
 type dentistHandler struct {
 	service dentist.IService
@@ -28,7 +31,7 @@ func (h *dentistHandler) GetByDentistID() gin.HandlerFunc {
 		}
 		product, err := h.service.GetDentistById(id)
 		if err != nil {
-			web.Failure(c, 404, errors.New("product no encontrado"))
+			web.Failure(c, 404, errors.New("dentista no encontrado"))
 			return
 		}
 		web.Success(c, 200, product)
@@ -69,12 +72,6 @@ func (h *dentistHandler) Post() gin.HandlerFunc {
 }
 
 // Completar
-// Delete elimina un producto
-func (h *dentistHandler) Delete() gin.HandlerFunc {
-	return func(c *gin.Context) {
-	}
-}
-
 // Put actualiza un producto
 func (h *dentistHandler) Put() gin.HandlerFunc {
 	return func(c *gin.Context) {
@@ -84,5 +81,28 @@ func (h *dentistHandler) Put() gin.HandlerFunc {
 // Patch actualiza un producto o alguno de sus campos
 func (h *dentistHandler) Patch() gin.HandlerFunc {
 	return func(c *gin.Context) {
+	}
+}
+
+// Delete elimina un producto
+func (h *dentistHandler) Delete() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		id := c.Param("id")
+		dentistId, err := strconv.Atoi(id)
+		if err != nil {
+			web.Failure(c, http.StatusBadRequest, web.NewBadRequestApiError("dentista con ID inválido"))
+			return
+		}
+		errDelete := h.service.DeleteDentist(dentistId)
+		if errDelete != nil {
+			if pathErr, ok := errDelete.(*os.PathError); ok && pathErr.Err == os.ErrNotExist {
+				web.Failure(c, http.StatusNotFound, web.NewNotFoundApiError("No existe el dentista con ese id"))
+				return
+			}
+			web.Failure(c, http.StatusInternalServerError, web.NewInternalServerApiError(errDelete.Error()))
+			return
+		}
+
+		web.Success(c, http.StatusOK, gin.H{"message": "dentista borrado"})
 	}
 }
