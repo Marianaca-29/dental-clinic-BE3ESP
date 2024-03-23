@@ -1,12 +1,14 @@
 package main
 
 import (
+	"DENTAL-CLINIC/cmd/server/handler"
+	"DENTAL-CLINIC/internal/appointment"
 	"DENTAL-CLINIC/internal/dentist"
 	"DENTAL-CLINIC/internal/patient"
 	"DENTAL-CLINIC/pkg/store"
-	"DENTAL-CLINIC/cmd/server/handler"
 	"database/sql"
 	"log"
+
 	"github.com/gin-gonic/gin"
 	_ "github.com/go-sql-driver/mysql"
 )
@@ -28,11 +30,15 @@ func main() {
 
 	dentistRepo := dentist.NewRepository(storage)
 	patientRepo := patient.NewRepository(storage)
+	appointmentRepo := appointment.NewRepository(storage)
 
 	dentistService := dentist.NewService(dentistRepo)
 	patientService := patient.NewService(patientRepo)
+	appointmentService := appointment.NewService(appointmentRepo)
+
 	dentistHandler := handler.NewDentistHandler(dentistService)
 	patientHandler := handler.NewPatientHandler(patientService)
+	appointmentHandler := handler.NewAppointmentHandler(appointmentService)
 	
 	r := gin.Default()
 
@@ -54,6 +60,13 @@ func main() {
 		
 	}
 
+	appointments := r.Group("/appointments")
+	{
+		appointments.GET(":id", appointmentHandler.GetById())
+		appointments.GET("DNI", appointmentHandler.GetByDNI())
+		appointments.POST("", appointmentHandler.POST())
+	}
+	
 
 	r.Run(":8080")
 }

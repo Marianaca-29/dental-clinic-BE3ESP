@@ -10,15 +10,15 @@ type IService interface {
 	UpdateDentistField(id int, p domain.Dentist) (*domain.Dentist, error)
 }
 
-type Service struct {
+type service struct {
 	Repository Repository
 }
 
 func NewService(repository Repository) IService {
-	return &Service{repository}
+	return &service{repository}
 }
 
-func (s *Service) GetDentistById(id int) (*domain.Dentist, error) {
+func (s *service) GetDentistById(id int) (*domain.Dentist, error) {
 	p, err := s.Repository.GetDentistById(id)
 	if err != nil {
 		return nil, err
@@ -26,7 +26,7 @@ func (s *Service) GetDentistById(id int) (*domain.Dentist, error) {
 	return p, nil
 }
 
-func (s *Service) CreateDentist(p domain.Dentist) (*domain.Dentist, error) {
+func (s *service) CreateDentist(p domain.Dentist) (*domain.Dentist, error) {
 	dentist, err := s.Repository.CreateDentist(p)
 	if err != nil {
 		return nil, err
@@ -35,14 +35,14 @@ func (s *Service) CreateDentist(p domain.Dentist) (*domain.Dentist, error) {
 }
 
 // completar
-func (s *Service) UpdateDentist(dentist domain.Dentist) (*domain.Dentist, error){
+func (s *service) UpdateDentist(dentist domain.Dentist) (*domain.Dentist, error){
 	return nil, nil
 }
-func (s *Service) UpdateDentistField(id int, p domain.Dentist) (*domain.Dentist, error) {
+func (s *service) UpdateDentistField(id int, p domain.Dentist) (*domain.Dentist, error) {
 	return nil, nil
 }
 
-func (s *Service) DeleteDentist(id int) error {
+func (s *service) DeleteDentist(id int) error {
 	err := s.Repository.DeleteDentist(id)
 	if err != nil {
 		return err
