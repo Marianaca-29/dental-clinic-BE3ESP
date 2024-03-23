@@ -6,49 +6,54 @@ import (
 	"DENTAL-CLINIC/pkg/web"
 )
 
-type IRepository interface {
-	GetById(id int) (domain.Dentist, error)
-	Create(d domain.Dentist) (domain.Dentist, error)
+type Repository interface {
+	CreateDentist(d domain.Dentist) (*domain.Dentist, error)
+	GetDentistById(id int) (*domain.Dentist, error)
+	UpdateDentist(dentist domain.Dentist) (*domain.Dentist, error)
+	UpdateDentistField(id int, p domain.Dentist) (*domain.Dentist, error)
+	DeleteDentist(id int) error
 }
 
-type Repository struct {
-	Store store.StoreInterface
+type repository struct {
+	storage store.StoreInterface
 }
 
-func NewRepository(Store store.StoreInterface) IRepository {
-	return &Repository{Store}
+func NewRepository(storage store.StoreInterface) Repository {
+	return &repository{storage}
 }
 
-func (r *Repository) GetById(id int) (domain.Dentist, error) {
-	dent, err := r.Store.GetDentistById(id)
+func (r *repository) CreateDentist(d domain.Dentist) (*domain.Dentist, error) {
+	exists, err := r.storage.GetDentistIdByLicense(d.License)
 	if err != nil {
-		return domain.Dentist{}, web.NewNotFoundApiError("/nDentista inexistente")
-	}
-
-	return *dent, nil
-}
-
-func (r *Repository) Create(d domain.Dentist) (domain.Dentist, error) {
-	exists, err := r.Store.GetDentistIdByLicense(d.License)
-	if err != nil {
-		return domain.Dentist{}, err
+		return nil, err
 	}
 	if exists != 0 {
-		return domain.Dentist{}, web.NewBadRequestApiError("/nEsa matrícula ya existe")
+		return nil, web.NewBadRequestApiError("/nEsa matrícula ya existe")
 	}
-	dent, err := r.Store.CreateDentist(d)
+	dent, err := r.storage.CreateDentist(d)
 	if err != nil {
-		return domain.Dentist{}, err
+		return nil, err
 	}
-	return *dent, nil
+	return dent, nil
+}
+func (r *repository) GetDentistById(id int) (*domain.Dentist, error) {
+	dentistResponse, err := r.storage.GetDentistById(id)
+	if err != nil {
+		return nil, web.NewNotFoundApiError("/nDentista inexistente")
+	}
+
+	return dentistResponse, nil
 }
 
-// Completar
-func (r *Repository) Delete(id int) error {
 
+// Completar
+func (r *repository) DeleteDentist(id int) error {
 	return nil
 }
 
-func (r *Repository) Update(id int, p domain.Dentist) (domain.Dentist, error) {
-	return p, nil
+func (r *repository) UpdateDentist(dentist domain.Dentist) (*domain.Dentist, error) {
+	return nil, nil
+}
+func (r *repository) UpdateDentistField(id int, p domain.Dentist) (*domain.Dentist, error) {
+	return nil, nil
 }

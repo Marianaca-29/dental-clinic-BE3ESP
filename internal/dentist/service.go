@@ -3,41 +3,45 @@ package dentist
 import "DENTAL-CLINIC/internal/domain"
 
 type IService interface {
-	GetByID(id int) (domain.Dentist, error)
-	Create(p domain.Dentist) (domain.Dentist, error)
-	Delete(id int) error
-	Update(id int, p domain.Dentist) (domain.Dentist, error)
+	CreateDentist(p domain.Dentist) (*domain.Dentist, error)
+	GetDentistById(id int) (*domain.Dentist, error)
+	DeleteDentist(id int) error
+	UpdateDentist(dentist domain.Dentist) (*domain.Dentist, error)
+	UpdateDentistField(id int, p domain.Dentist) (*domain.Dentist, error)
 }
 
 type Service struct {
-	Repository IRepository
+	Repository Repository
 }
 
-func NewService(repository IRepository) IService {
-	return &Service{Repository: repository}
+func NewService(repository Repository) IService {
+	return &Service{repository}
 }
 
-func (s *Service) GetByID(id int) (domain.Dentist, error) {
-	p, err := s.Repository.GetById(id)
+func (s *Service) GetDentistById(id int) (*domain.Dentist, error) {
+	p, err := s.Repository.GetDentistById(id)
 	if err != nil {
-		return domain.Dentist{}, err
+		return nil, err
 	}
 	return p, nil
 }
 
-func (s *Service) Create(p domain.Dentist) (domain.Dentist, error) {
-	p, err := s.Repository.Create(p)
+func (s *Service) CreateDentist(p domain.Dentist) (*domain.Dentist, error) {
+	dentist, err := s.Repository.CreateDentist(p)
 	if err != nil {
-		return domain.Dentist{}, err
+		return nil, err
 	}
-	return p, nil
+	return dentist, nil
 }
 
 // completar
-func (s *Service) Delete(id int) error {
+func (s *Service) DeleteDentist(id int) error {
 	return nil
 }
 
-func (s *Service) Update(id int, p domain.Dentist) (domain.Dentist, error) {
-	return domain.Dentist{}, nil
+func (s *Service) UpdateDentist(dentist domain.Dentist) (*domain.Dentist, error){
+	return nil, nil
+}
+func (s *Service) UpdateDentistField(id int, p domain.Dentist) (*domain.Dentist, error) {
+	return nil, nil
 }

@@ -67,18 +67,57 @@ func (h *patientHandler) GetPatientById() gin.HandlerFunc {
 
 func (h *patientHandler) UpdatePatient() gin.HandlerFunc {
 	return func(c *gin.Context) { 
+		var patient domain.Patient
+		if err := c.ShouldBindJSON(&patient); err != nil {
+			web.Failure(c, http.StatusBadRequest, web.NewBadRequestApiError("invalid JSON"))
+			return
+	}
+	updatedPatient, err := h.service.UpdatePatient(patient)
+		if err != nil {
+			web.Failure(c, http.StatusInternalServerError, web.NewInternalServerApiError(err.Error()))
+			return
+		}
 
+		web.Success(c, http.StatusOK, updatedPatient)
 	}
 }
 
 func (h *patientHandler) UpdatePatientField() gin.HandlerFunc {
 	return func(c *gin.Context) { 
+		id := c.Param("id")
+		field := c.Param("field")
+		value := c.Param("value")
 
+		patientID, err := strconv.Atoi(id)
+		if err != nil {
+			web.Failure(c, http.StatusBadRequest, web.NewBadRequestApiError("invalid patient ID"))
+			return
+		}
+
+		updatedPatient, err := h.service.UpdatePatientField(patientID, field, value)
+		if err != nil {
+			web.Failure(c, http.StatusInternalServerError, web.NewInternalServerApiError(err.Error()))
+			return
+		}
+
+		web.Success(c, http.StatusOK, updatedPatient)
 	}
 }
 
 func (h *patientHandler) DeletePatient() gin.HandlerFunc {
-	return func(c *gin.Context) { 
+	return func(c *gin.Context) {
+		id := c.Param("id")
+		patientID, err := strconv.Atoi(id)
+		if err != nil {
+			web.Failure(c, http.StatusBadRequest, web.NewBadRequestApiError(" patiente con ID inválido"))
+			return
+		}
 
+		if err := h.service.DeletePatient(patientID); err != nil {
+			web.Failure(c, http.StatusInternalServerError, web.NewInternalServerApiError(err.Error()))
+			return
+		}
+
+		web.Success(c, http.StatusOK, gin.H{"message": "patient deleted"})
 	}
 }

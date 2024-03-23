@@ -18,7 +18,7 @@ func NewDentistHandler(s dentist.IService) *dentistHandler {
 	}
 }
 
-func (h *dentistHandler) GetByID() gin.HandlerFunc {
+func (h *dentistHandler) GetByDentistID() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		idParam := c.Param("id")
 		id, err := strconv.Atoi(idParam)
@@ -26,7 +26,7 @@ func (h *dentistHandler) GetByID() gin.HandlerFunc {
 			web.Failure(c, 400, errors.New("id no válido"))
 			return
 		}
-		product, err := h.s.GetByID(id)
+		product, err := h.s.GetDentistById(id)
 		if err != nil {
 			web.Failure(c, 404, errors.New("product no encontrado"))
 			return
@@ -59,7 +59,7 @@ func (h *dentistHandler) Post() gin.HandlerFunc {
 			web.Failure(c, 400, err)
 			return
 		}
-		p, err := h.s.Create(dentist)
+		p, err := h.s.CreateDentist(dentist)
 		if err != nil {
 			web.Failure(c, 400, err)
 			return

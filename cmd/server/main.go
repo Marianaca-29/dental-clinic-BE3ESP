@@ -33,7 +33,7 @@ func main() {
 	r.GET("/ping", func(c *gin.Context) { c.String(200, "pong") })
 	dentist := r.Group("/dentists")
 	{
-		dentist.GET(":id", dentistHandler.GetByID())
+		dentist.GET(":id", dentistHandler.GetByDentistID())
 		dentist.POST("", dentistHandler.Post())
 		//Completar otros 
 	}
