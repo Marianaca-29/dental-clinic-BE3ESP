@@ -9,3 +9,11 @@ type Appointment struct {
 	Time        string `json:"time" binding:"required"`
 	Description string `json:"description" binding:"required"`
 }
+
+type AppointmentData struct {
+	DNI         string `json:"dni"`
+	License     string `json:"license"`
+	Date        string `json:"date"`
+	Time        string `json:"time"`
+	Description string `json:"description"`
+}

@@ -62,7 +62,7 @@ func (h *dentistHandler) CreateDentist() gin.HandlerFunc {
 		}
 		valid, err := validateNotEmptyDentist(&dentist)
 		if !valid {
-			c.AbortWithStatusJSON(http.StatusBadRequest, web.NewNotFoundApiError(fmt.Sprintf("Los campos no pueden estar vacios")))
+			c.AbortWithStatusJSON(http.StatusBadRequest, web.NewBadRequestApiError(err.Error()))
 			return
 		}
 		d, err := h.service.CreateDentist(dentist)

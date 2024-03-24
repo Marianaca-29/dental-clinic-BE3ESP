@@ -66,6 +66,10 @@ func main() {
 	{
 		appointments.GET("/getAppointment/:id", appointmentHandler.GetAppointmentById())
 		appointments.POST("/postAppointment", appointmentHandler.CreateAppointment())
+		appointments.PUT("updateAppointment", appointmentHandler.UpdateAppointment())
+		appointments.PATCH("updateAppointmentField", appointmentHandler.UpdateAppointmentField())
+		appointments.DELETE("/deleteAppointment/:id", appointmentHandler.DeleteAppointment())
+		appointments.POST("/postAppointmentDNILicense", appointmentHandler.CreateAppointmentByDNIAndLicense())
 		appointments.GET("/getByDNI/:dni", appointmentHandler.GetAppointmentsByDNI())
 	}
 	

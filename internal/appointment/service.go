@@ -10,7 +10,7 @@ type IService interface {
 	UpdateAppointment(appointment domain.Appointment) (*domain.Appointment, error) // PUT: Actualizar turno
 	UpdateAppointmentField(appointment domain.Appointment) (*domain.Appointment, error) // PATCH: Actualizar un campo específico del turno
 	DeleteAppointment(id int) (error) // DELETE: Eliminar turno
-	CreateAppointmentByDNIAndLicense(DNI string, license string, appointment domain.Appointment) (*domain.Appointment, error) // POST: Agregar turno por DNI del paciente y matrícula del dentista
+	CreateAppointmentByDNIAndLicense(appointmentData domain.AppointmentData) (*domain.Appointment, error) // POST: Agregar turno por DNI del paciente y matrícula del dentista
 	GetAppointmentsByDNI(DNI string) ([]domain.Appointment, error) // GET: Traer turnos por DNI del paciente
 }
 
@@ -39,19 +39,68 @@ func (s *service) CreateAppointment(appointment domain.Appointment) (*domain.App
 }
 
 func (s *service) UpdateAppointment(appointment domain.Appointment) (*domain.Appointment, error) {
-	return nil, nil
+	appointmentFound, err := s.repository.GetAppointmentById(appointment.ID)
+	if err != nil {
+		return nil, err
+	}
+
+	if appointment.IdDentist == 0 {
+		appointment.IdDentist = appointmentFound.IdDentist
+	}
+	if appointment.IdPatient == 0 {
+		appointment.IdPatient = appointmentFound.IdPatient
+	}
+	if appointment.Date == "" {
+		appointment.Date = appointmentFound.Date
+	}
+	if appointment.Time == "" {
+		appointment.Time = appointmentFound.Time
+	}
+	if appointment.Description == "" {
+		appointment.Description = appointmentFound.Description
+	}
+	
+	appointmentUpdated, err := s.repository.UpdateAppointment(appointment)
+	if err != nil {
+		return nil, err
+	}
+	
+	return appointmentUpdated, nil
 }
 
 func (s *service) UpdateAppointmentField(appointment domain.Appointment) (*domain.Appointment, error) {
-	return nil, nil
+	var field []string
+	var values []string
+	if appointment.Date != "" {
+		field = append(field, "date")
+		values = append(values, appointment.Date)
+	}
+	if appointment.Time != "" {
+		field = append(field, "time")
+		values = append(values, appointment.Time)
+	}
+	if  appointment.Description != "" {
+		field = append(field, "description")
+		values = append(values, appointment.Description)
+	}
+
+	appointmentUpdated, err := s.repository.UpdateAppointmentField(appointment.ID, field, values) 
+	if err != nil {
+		return nil, err
+	}
+	return appointmentUpdated, nil
 }
 
 func (s *service) DeleteAppointment(id int) error {
+	err := s.repository.DeleteAppointment(id)
+	if err != nil {
+		return err
+	}
 	return nil
 }
 
-func (s *service) CreateAppointmentByDNIAndLicense(DNI string, license string, appointment domain.Appointment) (*domain.Appointment, error) {
-	createdAppointment, err := s.repository.CreateAppointmentByDNIAndLicense(DNI, license, appointment)
+func (s *service) CreateAppointmentByDNIAndLicense(appointmentData domain.AppointmentData) (*domain.Appointment, error) {
+	createdAppointment, err := s.repository.CreateAppointmentByDNIAndLicense(appointmentData)
 	if err != nil {
 		return nil, err
 	}

@@ -31,9 +31,9 @@ func (h *patientHandler) CreatePatient() gin.HandlerFunc {
 			return
 		}
 
-		valid, _ := validateNotEmptyPatient(&patient)
+		valid, err := validateNotEmptyPatient(&patient)
 		if !valid {
-			c.AbortWithStatusJSON(http.StatusBadRequest, web.NewBadRequestApiError("Debe ingresar todos los datos requeridos"))
+			c.AbortWithStatusJSON(http.StatusBadRequest, web.NewBadRequestApiError(err.Error()))
 			return
 		}
 
@@ -94,8 +94,15 @@ func (h *patientHandler) UpdatePatient() gin.HandlerFunc {
 		if err := c.ShouldBindJSON(&patient); err != nil {
 			c.AbortWithStatusJSON(http.StatusBadRequest, web.NewNotFoundApiError(fmt.Sprintf("JSON invalido")))
 			return
-	}
-	updatedPatient, err := h.service.UpdatePatient(patient)
+		}
+
+		_, errNotFound := h.service.GetPatientById(patient.ID)
+		if errNotFound != nil {
+			c.AbortWithStatusJSON(http.StatusBadRequest, web.NewNotFoundApiError(fmt.Sprintf("No existe el paciente con el id %d", patient.ID)))
+			return
+		}
+		
+		updatedPatient, err := h.service.UpdatePatient(patient)
 		if err != nil {
 			c.AbortWithStatusJSON(http.StatusInternalServerError, web.NewInternalServerApiError(err.Error()))
 			return

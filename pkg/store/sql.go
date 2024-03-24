@@ -468,26 +468,26 @@ func (s *sqlStore) DeleteAppointment(id int) error {
 	return nil
 }
 
-func (s *sqlStore) CreateAppointmentByDNIAndLicense(DNI string, license string, appointment domain.Appointment) (*domain.Appointment, error) {
+func (s *sqlStore) CreateAppointmentByDNIAndLicense(appointmentData domain.AppointmentData) (*domain.Appointment, error) {
 
-	idDentist, err := s.GetDentistIdByLicense(license)
+	idDentist, err := s.GetDentistIdByLicense(appointmentData.License)
 	if err != nil || idDentist == 0 {
 		return nil, err
 	}
 
-	idPatient, err := s.GetPatientIdByDNI(DNI)
+	idPatient, err := s.GetPatientIdByDNI(appointmentData.DNI)
 	if err != nil || idPatient == 0 {
 		return nil, err
 	}
 
-	query := "INSERT INTO appointments (id_patient, id_dentist, date, time) VALUES (?, ?, ?, ?)"
+	query := "INSERT INTO appointments (id_patient, id_dentist, date, time, description) VALUES (?, ?, ?, ?)"
 
 	stmt, err := s.db.Prepare(query)
 	if err != nil {
 		return nil, err
 	}
 
-	res, err := stmt.Exec(idDentist, idPatient, appointment.Date, appointment.Time)
+	res, err := stmt.Exec(idDentist, idPatient, appointmentData.Date, appointmentData.Time, appointmentData.Description)
 	if err != nil {
 		return nil, err
 	}
@@ -497,10 +497,18 @@ func (s *sqlStore) CreateAppointmentByDNIAndLicense(DNI string, license string, 
 		return nil, err
 	}
 
-	lastId, _ := res.LastInsertId()
-	appointment.ID = int(lastId)
+	lastID, err := res.LastInsertId()
+	if err != nil {
+		return nil, err
+	}
+	appointmentID := int(lastID)
 
-	return &appointment, nil
+	appointment, err := s.GetAppointmentById(appointmentID)
+	if err != nil {
+		return nil, err
+	}
+	
+	return appointment, nil
 }
 
 func (s *sqlStore) GetAppointmentsByDNI(DNI string) ([]domain.Appointment, error) {
