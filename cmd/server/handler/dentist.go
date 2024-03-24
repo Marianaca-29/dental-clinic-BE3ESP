@@ -34,8 +34,9 @@ func (h *dentistHandler) GetByDentistID() gin.HandlerFunc {
 		web.Success(c, 200, product)
 	}
 }
+
 // validateNotEmpty valida que los campos no estén vacíos
-func validateNotEmpty(dentist *domain.Dentist) (bool, error) {
+func validateNotEmptyDentist(dentist *domain.Dentist) (bool, error) {
 	switch {
 	case dentist.FirstName == "":
 		return false, web.NewBadRequestApiError("el nombre del dentista no puede estar vacío")
@@ -46,7 +47,7 @@ func validateNotEmpty(dentist *domain.Dentist) (bool, error) {
 }
 
 // Post crea un nuevo producto
-func (h *dentistHandler) Post() gin.HandlerFunc {
+func (h *dentistHandler) CreateDentist() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var dentist domain.Dentist
 		err := c.ShouldBindJSON(&dentist)
@@ -54,7 +55,7 @@ func (h *dentistHandler) Post() gin.HandlerFunc {
 			web.Failure(c, 400, web.NewBadRequestApiError("invalid json"))
 			return
 		}
-		valid, err := validateNotEmpty(&dentist)
+		valid, err := validateNotEmptyDentist(&dentist)
 		if !valid {
 			web.Failure(c, 400, err)
 			return
@@ -70,19 +71,19 @@ func (h *dentistHandler) Post() gin.HandlerFunc {
 
 // Completar
 // Delete elimina un producto
-func (h *dentistHandler) Delete() gin.HandlerFunc {
+func (h *dentistHandler) DeleteDentist() gin.HandlerFunc {
 	return func(c *gin.Context) {
 	}
 }
 
 // Put actualiza un producto
-func (h *dentistHandler) Put() gin.HandlerFunc {
+func (h *dentistHandler) UpdateDentist() gin.HandlerFunc {
 	return func(c *gin.Context) {
 	}
 }
 
 // Patch actualiza un producto o alguno de sus campos
-func (h *dentistHandler) Patch() gin.HandlerFunc {
+func (h *dentistHandler) UpdateDentistField() gin.HandlerFunc {
 	return func(c *gin.Context) {
 	}
 }
