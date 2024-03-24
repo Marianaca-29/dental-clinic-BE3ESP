@@ -70,7 +70,7 @@ func (h *dentistHandler) CreateDentist() gin.HandlerFunc {
 			c.AbortWithStatusJSON(http.StatusInternalServerError, web.NewInternalServerApiError(err.Error()))
 			return
 		}
-		c.JSON(http.StatusOK, gin.H{"dentista" : d})
+		c.JSON(http.StatusCreated, gin.H{"dentista" : d})
 	}
 }
 

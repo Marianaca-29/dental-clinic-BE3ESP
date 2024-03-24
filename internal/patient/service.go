@@ -5,11 +5,11 @@ import (
 )
 
 type IService interface {
-	CreatePatient (patient domain.Patient) (*domain.Patient, error)
-	GetPatientById (id int) (*domain.Patient, error)
-	UpdatePatient (patient domain.Patient) (*domain.Patient, error)
-	UpdatePatientField (p domain.Patient) (*domain.Patient, error)
-	DeletePatient (id int) (error)
+	CreatePatient(patient domain.Patient) (*domain.Patient, error)
+	GetPatientById(id int) (*domain.Patient, error)
+	UpdatePatient(patient domain.Patient) (*domain.Patient, error)
+	UpdatePatientField(p domain.Patient) (*domain.Patient, error)
+	DeletePatient(id int) (error)
 }
 
 type service struct {
@@ -20,7 +20,7 @@ func NewService(r Repository) IService {
 	return &service{r}
 }
 
-func (s *service) CreatePatient (patient domain.Patient) (*domain.Patient, error) {
+func (s *service) CreatePatient(patient domain.Patient) (*domain.Patient, error) {
 	patientResponse, err := s.repository.CreatePatient(patient)
 	if (err != nil) {
 		return nil, err
@@ -29,7 +29,7 @@ func (s *service) CreatePatient (patient domain.Patient) (*domain.Patient, error
 	return patientResponse, nil
 }
 
-func (s *service) GetPatientById (id int) (*domain.Patient, error) {
+func (s *service) GetPatientById(id int) (*domain.Patient, error) {
 	patientResponse, err := s.repository.GetPatientById(id)
 	if (err != nil) {
 		return nil, err
@@ -38,7 +38,7 @@ func (s *service) GetPatientById (id int) (*domain.Patient, error) {
 	return patientResponse, nil
 }
 
-func (s *service) UpdatePatient (patient domain.Patient) (*domain.Patient, error) {
+func (s *service) UpdatePatient(patient domain.Patient) (*domain.Patient, error) {
 	patientFound, err := s.repository.GetPatientById(patient.ID)
 	if err != nil {
 		return nil, err
@@ -68,7 +68,7 @@ func (s *service) UpdatePatient (patient domain.Patient) (*domain.Patient, error
 	return patientUpdated, nil
 }
 
-func (s *service) UpdatePatientField (p domain.Patient) (*domain.Patient, error) {
+func (s *service) UpdatePatientField(p domain.Patient) (*domain.Patient, error) {
 	var field []string
 	var values []string
 	if p.FirstName != "" {
@@ -100,7 +100,7 @@ func (s *service) UpdatePatientField (p domain.Patient) (*domain.Patient, error)
 	return patient, nil
 }
 
-func (s *service) DeletePatient (id int) (error) {
+func (s *service) DeletePatient(id int) (error) {
 	err := s.repository.DeletePatient(id)
 	if err != nil {
 		return err

@@ -5,6 +5,7 @@ import (
 	"DENTAL-CLINIC/internal/domain"
 	"DENTAL-CLINIC/pkg/web"
 
+	"fmt"
 	"net/http"
 	"strconv"
 
@@ -19,55 +20,59 @@ func NewAppointmentHandler(service appointment.IService) *AppointmentHandler {
 	return &AppointmentHandler{Service: service}
 }
 
-func (h *AppointmentHandler) POST() gin.HandlerFunc {
+func (h *AppointmentHandler) CreateAppointment() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var appointment domain.Appointment
-		if err := c.ShouldBindJSON(&appointment); err != nil {
-			web.Failure(c, http.StatusBadRequest, web.NewBadRequestApiError(err.Error()))
+		err := c.ShouldBindJSON(&appointment)
+		if err != nil {
+			c.AbortWithStatusJSON(http.StatusBadRequest, web.NewNotFoundApiError(fmt.Sprintf("JSON invalido")))
 			return
 		}
 
 		createdAppointment, err := h.Service.CreateAppointment(appointment)
 		if err != nil {
-			web.Failure(c, http.StatusInternalServerError, web.NewInternalServerApiError(err.Error()))
+			c.AbortWithStatusJSON(http.StatusInternalServerError, web.NewInternalServerApiError(err.Error()))
 			return
 		}
 
-		web.Success(c, http.StatusCreated, createdAppointment)
+		c.JSON(http.StatusCreated, gin.H{"turno" : createdAppointment})
 	}
 }
 
-func (h *AppointmentHandler) GetById() gin.HandlerFunc {
+func (h *AppointmentHandler) GetAppointmentById() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		id := c.Param("id")
 		appointmentID, err := strconv.Atoi(id)
 		if err != nil {
-			web.Failure(c, http.StatusBadRequest, web.NewBadRequestApiError("Invalid appointment ID"))
+			c.AbortWithStatusJSON(http.StatusBadRequest, web.NewNotFoundApiError(fmt.Sprintf("Ingrese un id valido")))
 			return
 		}
 
 		appointment, err := h.Service.GetAppointmentById(appointmentID)
 		if err != nil {
-			web.Failure(c, http.StatusInternalServerError, web.NewInternalServerApiError(err.Error()))
+			c.AbortWithStatusJSON(http.StatusInternalServerError, web.NewInternalServerApiError(err.Error()))
 			return
 		}
 
-		web.Success(c, http.StatusOK, appointment)
+		c.JSON(http.StatusOK, gin.H{"turno" : appointment})
 	}
 }
 
-func (h *AppointmentHandler) GetByDNI() gin.HandlerFunc {
+// UpdateAppointment
+// UpdateAppointmentField
+// DeleteAppointment
+// CreateAppointmentByDNIAndLicense
+
+func (h *AppointmentHandler) GetAppointmentsByDNI() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		DNI := c.Query("DNI")
+		DNI := c.Query("dni")
 
 		appointments, err := h.Service.GetAppointmentsByDNI(DNI)
 		if err != nil {
-			web.Failure(c, http.StatusInternalServerError, web.NewInternalServerApiError(err.Error()))
+			c.AbortWithStatusJSON(http.StatusInternalServerError, web.NewInternalServerApiError(err.Error()))
 			return
 		}
 
-		web.Success(c, http.StatusOK, appointments)
+		c.JSON(http.StatusOK, gin.H{"turnos" : appointments})
 	}
 }
-
-//completar

@@ -64,9 +64,9 @@ func main() {
 
 	appointments := r.Group("/appointments")
 	{
-		appointments.GET(":id", appointmentHandler.GetById())
-		appointments.GET("DNI", appointmentHandler.GetByDNI())
-		appointments.POST("", appointmentHandler.POST())
+		appointments.GET("/getAppointment/:id", appointmentHandler.GetAppointmentById())
+		appointments.POST("/postAppointment", appointmentHandler.CreateAppointment())
+		appointments.GET("/getByDNI/:dni", appointmentHandler.GetAppointmentsByDNI())
 	}
 	
 

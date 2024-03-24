@@ -8,11 +8,11 @@ import (
 )
 
 type Repository interface {
-	CreatePatient (patient domain.Patient) (*domain.Patient, error)
-	GetPatientById (id int) (*domain.Patient, error)
-	UpdatePatient (patient domain.Patient) (*domain.Patient, error)
-	UpdatePatientField (id int, field []string, value []string) (*domain.Patient, error)
-	DeletePatient (id int) (error)
+	CreatePatient(patient domain.Patient) (*domain.Patient, error)
+	GetPatientById(id int) (*domain.Patient, error)
+	UpdatePatient(patient domain.Patient) (*domain.Patient, error)
+	UpdatePatientField(id int, field []string, value []string) (*domain.Patient, error)
+	DeletePatient(id int) (error)
 }
 
 type repository struct {
@@ -23,7 +23,7 @@ func NewRepository(storage store.StoreInterface) Repository {
 	return &repository{storage}
 }
 
-func (r *repository) CreatePatient (patient domain.Patient) (*domain.Patient, error) {
+func (r *repository) CreatePatient(patient domain.Patient) (*domain.Patient, error) {
 	exist, _ := r.storage.GetPatientIdByDNI(patient.DNI)
 	if exist != 0 {
 		return nil, web.NewBadRequestApiError(fmt.Sprintf("Ya existe el paciente con el DNI %s", patient.DNI))
@@ -37,7 +37,7 @@ func (r *repository) CreatePatient (patient domain.Patient) (*domain.Patient, er
 	return patientResponse, nil
 }
 
-func (r *repository) GetPatientById (id int) (*domain.Patient, error) {
+func (r *repository) GetPatientById(id int) (*domain.Patient, error) {
 	patientResponse, err := r.storage.GetPatientById(id)
 	if (err != nil) {
 		return nil, web.NewNotFoundApiError(fmt.Sprintf("No se ha encontrado ningun paciente con el id %d", id))
@@ -46,7 +46,7 @@ func (r *repository) GetPatientById (id int) (*domain.Patient, error) {
 	return patientResponse, nil
 }
 
-func (r *repository) UpdatePatient (patient domain.Patient) (*domain.Patient, error) {
+func (r *repository) UpdatePatient(patient domain.Patient) (*domain.Patient, error) {
 	updatedPatient, err := r.storage.UpdatePatient(patient)
 	if err != nil {
 		return nil, err
@@ -54,7 +54,7 @@ func (r *repository) UpdatePatient (patient domain.Patient) (*domain.Patient, er
 	return updatedPatient, nil
 }
 
-func (r *repository) UpdatePatientField (id int, field []string, value []string) (*domain.Patient, error){
+func (r *repository) UpdatePatientField(id int, field []string, value []string) (*domain.Patient, error){
 	updatedPatient, err := r.storage.UpdatePatientField(id, field, value)
     if err != nil {
         return nil, err
@@ -62,7 +62,7 @@ func (r *repository) UpdatePatientField (id int, field []string, value []string)
     return updatedPatient, nil
 }
 
-func (r *repository) DeletePatient (id int) (error) {
+func (r *repository) DeletePatient(id int) (error) {
 	err := r.storage.DeletePatient(id)
 	if err != nil {
 		return err

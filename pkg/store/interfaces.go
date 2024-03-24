@@ -25,7 +25,7 @@ type StoreInterface interface {
 	CreateAppointment (appointment domain.Appointment) (*domain.Appointment, error)  // POST: Agregar turno
 	GetAppointmentById (id int) (*domain.Appointment, error) // GET: Traer turno por ID
 	UpdateAppointment (appointment domain.Appointment) (*domain.Appointment, error) // PUT: Actualizar turno
-	UpdateAppointmentField (id int, field string, value string) (*domain.Appointment, error) // PATCH: Actualizar un campo específico del turno
+	UpdateAppointmentField (id int, field []string, value []string) (*domain.Appointment, error) // PATCH: Actualizar un campo específico del turno
 	DeleteAppointment (id int) (error) // DELETE: Eliminar turno
 	CreateAppointmentByDNIAndLicense (DNI string, license string, appointment domain.Appointment) (*domain.Appointment, error) // POST: Agregar turno por DNI del paciente y matrícula del dentista
 	GetAppointmentsByDNI (DNI string) ([]domain.Appointment, error) // GET: Traer turnos por DNI del paciente

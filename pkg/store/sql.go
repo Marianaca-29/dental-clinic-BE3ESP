@@ -398,24 +398,45 @@ func (s *sqlStore) UpdateAppointment(appointment domain.Appointment) (*domain.Ap
 	return updatedAppointment, nil
 }
 
-func (s *sqlStore) UpdateAppointmentField(id int, field string, value string) (*domain.Appointment, error) {
-	query := "UPDATE appointments SET " + field + " = ? WHERE id_appointment = ?"
+func (s *sqlStore) UpdateAppointmentField(id int, field []string, value []string) (*domain.Appointment, error) {
+	// Verificar si los slices de campos y valores tienen la misma longitud
+    if len(field) != len(value) {
+        return nil, errors.New("la cantidad de campos y valores no coincide")
+    }
 
-	stmt, err := s.db.Prepare(query)
-	if err != nil {
-		return nil, err
-	}
-	defer stmt.Close()
+	// Crear la parte de la consulta SQL para actualizar campos
+    var setClause strings.Builder
+    for i, field := range field {
+        if i != 0 {
+            setClause.WriteString(", ")
+        }
+        setClause.WriteString(field)
+        setClause.WriteString(" = ?")
+    }
 
-	res, err := stmt.Exec(value, id)
-	if err != nil {
-		return nil, err
+    // Formar la consulta SQL completa
+    query := fmt.Sprintf("UPDATE appointments SET %s WHERE id_appointment = ?", setClause.String())
+
+    // Convertir los slices de strings en un slice de interfaces
+	var interfaceValues []interface{}
+	for _, v := range value {
+		interfaceValues = append(interfaceValues, v)
 	}
+
+	// Concatenar el ID del dentista al final del slice de valores
+	interfaceValues = append(interfaceValues, id)
+
+	// Ejecutar la consulta SQL
+	res, err := s.db.Exec(query, interfaceValues...)
+	if err != nil {
+		return nil, errors.New("No se ha podido ejecutar la consulta")
+	}
+
 	rowsAffected, err := res.RowsAffected()
 	if err != nil {
 		return nil, err
 	} else if rowsAffected == 0 {
-		return nil, errors.New("ninguna fila fue cambiada")
+		return nil, errors.New("Ninguna fila fue cambiada")
 	}
 
 	updatedAppointment, err := s.GetAppointmentById(id)

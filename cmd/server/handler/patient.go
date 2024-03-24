@@ -43,7 +43,7 @@ func (h *patientHandler) CreatePatient() gin.HandlerFunc {
 			return
 		}
 		
-		c.JSON(http.StatusOK, gin.H{"paciente" : patientResponse})
+		c.JSON(http.StatusCreated, gin.H{"paciente" : patientResponse})
 	}
 }
 
