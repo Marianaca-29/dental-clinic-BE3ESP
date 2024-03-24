@@ -59,7 +59,7 @@ func (s *sqlStore) GetDentistById(id int) (*domain.Dentist, error) {
 }
 
 func (s *sqlStore) UpdateDentist(dentist domain.Dentist) (*domain.Dentist, error) {
-	query := "UPDATE dentists SET firts_name = ?, last_name = ?, license = ? WHERE id_dentist = ?"
+	query := "UPDATE dentists SET first_name = ?, last_name = ?, license = ? WHERE id_dentist = ?"
 
 	stmt, err := s.db.Prepare(query)
 	if err != nil {
@@ -168,7 +168,7 @@ func (s *sqlStore) GetDentistIdByLicense(license string) (int, error) {
 	row := s.db.QueryRow(query, license)
 
 	var id int
-	err := row.Scan(id)
+	err := row.Scan(&id)
 	if err != nil {
 		return 0, err
 	}
@@ -322,13 +322,13 @@ func (s *sqlStore) GetPatientIdByDNI(DNI string) (int, error) {
 	query := "SELECT id_patient FROM patients WHERE dni = ?"
 	row := s.db.QueryRow(query, DNI)
 
-	var id int
-	err := row.Scan(&id)
+	var dni int
+	err := row.Scan(&dni)
 	if err != nil {
 		return 0, err
 	}
 
-	return id, nil
+	return dni, nil
 }
 
 // Métodos para turnos:
@@ -480,7 +480,7 @@ func (s *sqlStore) CreateAppointmentByDNIAndLicense(appointmentData domain.Appoi
 		return nil, err
 	}
 
-	query := "INSERT INTO appointments (id_patient, id_dentist, date, time, description) VALUES (?, ?, ?, ?)"
+	query := "INSERT INTO appointments (id_patient, id_dentist, date, time, description) VALUES (?, ?, ?, ?, ?)"
 
 	stmt, err := s.db.Prepare(query)
 	if err != nil {
@@ -528,7 +528,7 @@ func (s *sqlStore) GetAppointmentsByDNI(DNI string) ([]domain.Appointment, error
 
 	for rows.Next() {
 		var appointment domain.Appointment
-		err := rows.Scan(&appointment.ID, appointment.IdDentist, appointment.IdPatient, appointment.Date, appointment.Time, appointment.Description)
+		err := rows.Scan(&appointment.ID, &appointment.IdPatient, &appointment.IdDentist, &appointment.Date, &appointment.Time, &appointment.Description)
 		if err != nil {
 			return nil, err
 		}

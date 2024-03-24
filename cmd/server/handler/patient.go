@@ -39,7 +39,7 @@ func (h *patientHandler) CreatePatient() gin.HandlerFunc {
 
 		patientResponse, err := h.service.CreatePatient(patient)
 		if (err != nil) {
-			c.AbortWithStatusJSON(http.StatusBadRequest, web.NewBadRequestApiError("No se ha podido crear el paciente"))
+			c.AbortWithStatusJSON(http.StatusBadRequest, web.NewBadRequestApiError("Ese DNI ya existe"))
 			return
 		}
 		
@@ -101,7 +101,7 @@ func (h *patientHandler) UpdatePatient() gin.HandlerFunc {
 			c.AbortWithStatusJSON(http.StatusBadRequest, web.NewNotFoundApiError(fmt.Sprintf("No existe el paciente con el id %d", patient.ID)))
 			return
 		}
-		
+
 		updatedPatient, err := h.service.UpdatePatient(patient)
 		if err != nil {
 			c.AbortWithStatusJSON(http.StatusInternalServerError, web.NewInternalServerApiError(err.Error()))

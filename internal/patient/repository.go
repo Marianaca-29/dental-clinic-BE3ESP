@@ -24,9 +24,9 @@ func NewRepository(storage store.StoreInterface) Repository {
 }
 
 func (r *repository) CreatePatient(patient domain.Patient) (*domain.Patient, error) {
-	exist, _ := r.storage.GetPatientIdByDNI(patient.DNI)
-	if exist != 0 {
-		return nil, web.NewBadRequestApiError(fmt.Sprintf("Ya existe el paciente con el DNI %s", patient.DNI))
+	exists, _ := r.storage.GetPatientIdByDNI(patient.DNI)
+	if exists != 0 {
+		return nil, web.NewBadRequestApiError("Ese DNI ya existe")
 	}
 	
 	patientResponse, err := r.storage.CreatePatient(patient)

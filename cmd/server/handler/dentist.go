@@ -57,7 +57,7 @@ func (h *dentistHandler) CreateDentist() gin.HandlerFunc {
 		var dentist domain.Dentist
 		err := c.ShouldBindJSON(&dentist)
 		if err != nil {
-			c.AbortWithStatusJSON(http.StatusBadRequest, web.NewNotFoundApiError(fmt.Sprintf("JSON invalido")))
+			c.AbortWithStatusJSON(http.StatusBadRequest, web.NewBadRequestApiError("Datos del dentista mal ingresados"))
 			return
 		}
 		valid, err := validateNotEmptyDentist(&dentist)
@@ -65,9 +65,10 @@ func (h *dentistHandler) CreateDentist() gin.HandlerFunc {
 			c.AbortWithStatusJSON(http.StatusBadRequest, web.NewBadRequestApiError(err.Error()))
 			return
 		}
+
 		d, err := h.service.CreateDentist(dentist)
 		if err != nil {
-			c.AbortWithStatusJSON(http.StatusInternalServerError, web.NewInternalServerApiError(err.Error()))
+			c.AbortWithStatusJSON(http.StatusBadRequest, web.NewBadRequestApiError(err.Error()))
 			return
 		}
 		c.JSON(http.StatusCreated, gin.H{"dentista" : d})

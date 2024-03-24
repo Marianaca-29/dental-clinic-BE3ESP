@@ -15,7 +15,7 @@ import (
 
 func main() {
 
-	db, err := sql.Open("mysql", "root:root@tcp(localhost:3306)/turnos_odontologia")
+	db, err := sql.Open("mysql", "root:lmcpauli1@tcp(localhost:3306)/turnos_odontologia")
 	if err != nil {
 		log.Fatal(err)
 	} 
@@ -46,31 +46,31 @@ func main() {
 
 	dentists := r.Group("/dentists")
 	{
-		dentists.GET("/getDentist/:id", dentistHandler.GetByDentistID())
-		dentists.POST("/postDentist", dentistHandler.CreateDentist())
-		dentists.PUT("/updateDentist", dentistHandler.UpdateDentist())
-		dentists.PATCH("/updateDentistField", dentistHandler.UpdateDentistField())
-		dentists.DELETE("/deletDentistt/:id", dentistHandler.DeleteDentist())
+		dentists.GET("getDentist/:id", dentistHandler.GetByDentistID())
+		dentists.POST("postDentist", dentistHandler.CreateDentist())
+		dentists.PUT("updateDentist", dentistHandler.UpdateDentist())
+		dentists.PATCH("updateDentistField", dentistHandler.UpdateDentistField())
+		dentists.DELETE("deleteDentist/:id", dentistHandler.DeleteDentist())
 	}
 
 	patients := r.Group("/patients")
 	{
 		patients.GET("getPatient/:id", patientHandler.GetPatientById())
-		patients.POST("/postPatient", patientHandler.CreatePatient())
-		patients.PATCH("/updatePatientField", patientHandler.UpdatePatient())
-		patients.PUT("/updatePatient", patientHandler.UpdatePatientField())
-		patients.DELETE("/deletePatient/:id", patientHandler.DeletePatient())
+		patients.POST("postPatient", patientHandler.CreatePatient())
+		patients.PATCH("updatePatientField", patientHandler.UpdatePatient())
+		patients.PUT("updatePatient", patientHandler.UpdatePatientField())
+		patients.DELETE("deletePatient/:id", patientHandler.DeletePatient())
 	}
 
 	appointments := r.Group("/appointments")
 	{
-		appointments.GET("/getAppointment/:id", appointmentHandler.GetAppointmentById())
-		appointments.POST("/postAppointment", appointmentHandler.CreateAppointment())
+		appointments.GET("getAppointment/:id", appointmentHandler.GetAppointmentById())
+		appointments.POST("postAppointment", appointmentHandler.CreateAppointment())
 		appointments.PUT("updateAppointment", appointmentHandler.UpdateAppointment())
 		appointments.PATCH("updateAppointmentField", appointmentHandler.UpdateAppointmentField())
-		appointments.DELETE("/deleteAppointment/:id", appointmentHandler.DeleteAppointment())
-		appointments.POST("/postAppointmentDNILicense", appointmentHandler.CreateAppointmentByDNIAndLicense())
-		appointments.GET("/getByDNI/:dni", appointmentHandler.GetAppointmentsByDNI())
+		appointments.DELETE("deleteAppointment/:id", appointmentHandler.DeleteAppointment())
+		appointments.POST("postAppointmentDNILicense", appointmentHandler.CreateAppointmentByDNIAndLicense())
+		appointments.GET("getByDNI", appointmentHandler.GetAppointmentsByDNI())
 	}
 	
 

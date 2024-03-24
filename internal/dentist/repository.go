@@ -25,17 +25,16 @@ func NewRepository(storage store.StoreInterface) Repository {
 }
 
 func (r *repository) CreateDentist(d domain.Dentist) (*domain.Dentist, error) {
-	exists, err := r.storage.GetDentistIdByLicense(d.License)
-	if err != nil {
-		return nil, err
-	}
+	exists, _ := r.storage.GetDentistIdByLicense(d.License)
 	if exists != 0 {
-		return nil, web.NewBadRequestApiError("/nEsa matrícula ya existe")
+		return nil, web.NewBadRequestApiError("Esa matrícula ya existe")
 	}
+
 	dent, err := r.storage.CreateDentist(d)
-	if err != nil {
-		return nil, err
+	if (err != nil) {
+		return nil, web.NewBadRequestApiError("No se ha podido crear el dentista")
 	}
+	
 	return dent, nil
 }
 
@@ -48,7 +47,6 @@ func (r *repository) GetDentistById(id int) (*domain.Dentist, error) {
 	return dentistResponse, nil
 }
 
-// Completar
 func (r *repository) UpdateDentist(d domain.Dentist) (*domain.Dentist, error) {
 	dentist, err := r.storage.UpdateDentist(d)
 	if err != nil {

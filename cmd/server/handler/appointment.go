@@ -194,6 +194,10 @@ func validateNotEmptyAppointmentDNILicense(appointment *domain.AppointmentData) 
 func (h *AppointmentHandler) GetAppointmentsByDNI() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		DNI := c.Query("dni")
+		if DNI == "" {
+			c.AbortWithStatusJSON(http.StatusBadRequest, web.NewBadRequestApiError("Debe ingresar el DNI del paciente"))
+			return
+		}
 
 		appointments, err := h.Service.GetAppointmentsByDNI(DNI)
 		if err != nil {
