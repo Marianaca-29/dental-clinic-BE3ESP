@@ -43,21 +43,23 @@ func main() {
 	r := gin.Default()
 
 	r.GET("/ping", func(c *gin.Context) { c.String(200, "pong") })
+
 	dentists := r.Group("/dentists")
 	{
-		dentists.GET(":id", dentistHandler.GetByDentistID())
-		dentists.POST("", dentistHandler.Post())
-		//Completar otros 
+		dentists.GET("/getDentist/:id", dentistHandler.GetByDentistID())
+		dentists.POST("/postDentist", dentistHandler.CreateDentist())
+		dentists.PUT("/updateDentist", dentistHandler.UpdateDentist())
+		dentists.PATCH("/updateDentistField", dentistHandler.UpdateDentistField())
+		dentists.DELETE("/deletDentistt/:id", dentistHandler.DeleteDentist())
 	}
+
 	patients := r.Group("/patients")
 	{
-		
-		patients.GET(":id", patientHandler.GetPatientById())
-		patients.POST("", patientHandler.Post())
-		patients.PATCH(":id", patientHandler.Put())
-		patients.PUT(":id", patientHandler.Patch())
-		patients.DELETE(":id", patientHandler.Delete())
-		
+		patients.GET("getPatient/:id", patientHandler.GetPatientById())
+		patients.POST("/postPatient", patientHandler.CreatePatient())
+		patients.PATCH("/updatePatientField", patientHandler.UpdatePatient())
+		patients.PUT("/updatePatient", patientHandler.UpdatePatientField())
+		patients.DELETE("/deletePatient/:id", patientHandler.DeletePatient())
 	}
 
 	appointments := r.Group("/appointments")

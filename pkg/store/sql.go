@@ -1,6 +1,9 @@
 package store
 
 import (
+	"fmt"
+	"strings"
+
 	"DENTAL-CLINIC/internal/domain"
 	"database/sql"
 	"errors"
@@ -87,23 +90,46 @@ func (s *sqlStore) UpdateDentist(dentist domain.Dentist) (*domain.Dentist, error
 	return &updatedDentist, nil
 }
 
-func (s *sqlStore) UpdateDentistField(id int, field string, value string) (*domain.Dentist, error) {
-	query := "UPDATE dentists SET " + field + " = ? WHERE id_dentist = ?"
+func (s *sqlStore) UpdateDentistField(id int, field []string, value []string) (*domain.Dentist, error) {
 
-	stmt, err := s.db.Prepare(query)
-	if err != nil {
-		return nil, err
+	// Verificar si los slices de campos y valores tienen la misma longitud
+    if len(field) != len(value) {
+        return nil, errors.New("la cantidad de campos y valores no coincide")
+    }
+
+	// Crear la parte de la consulta SQL para actualizar campos
+    var setClause strings.Builder
+    for i, field := range field {
+        if i != 0 {
+            setClause.WriteString(", ")
+        }
+        setClause.WriteString(field)
+        setClause.WriteString(" = ?")
+    }
+
+    // Formar la consulta SQL completa
+    query := fmt.Sprintf("UPDATE dentists SET %s WHERE id_dentist = ?", setClause.String())
+
+    // Convertir los slices de strings en un slice de interfaces
+	var interfaceValues []interface{}
+	for _, v := range value {
+		interfaceValues = append(interfaceValues, v)
 	}
 
-	res, err := stmt.Exec(value, id)
+	// Concatenar el ID del dentista al final del slice de valores
+	interfaceValues = append(interfaceValues, id)
+
+	// Ejecutar la consulta SQL
+	res, err := s.db.Exec(query, interfaceValues...)
 	if err != nil {
-		return nil, err
+		return nil, errors.New("No se ha podido ejecutar la consulta")
 	}
+
 	rowsAffected, err := res.RowsAffected()
 	if err != nil {
 		return nil, err
 	} else if rowsAffected == 0 {
-		return nil, errors.New("ninguna fila fue cambiada")
+		return nil, errors.New("Ninguna fila fue cambiada")
 	}
 
 	updatedDentist, err := s.GetDentistById(id)
@@ -220,23 +246,45 @@ func (s *sqlStore) UpdatePatient(patient domain.Patient) (*domain.Patient, error
 	return &updatedPatient, nil
 }
 
-func (s *sqlStore) UpdatePatientField(id int, field string, value string) (*domain.Patient, error) {
-	query := "UPDATE patients SET " + field + " = ? WHERE id_patient = ?"
+func (s *sqlStore) UpdatePatientField(id int, field []string, value []string) (*domain.Patient, error) {
+	// Verificar si los slices de campos y valores tienen la misma longitud
+    if len(field) != len(value) {
+        return nil, errors.New("la cantidad de campos y valores no coincide")
+    }
 
-	stmt, err := s.db.Prepare(query)
-	if err != nil {
-		return nil, err
+	// Crear la parte de la consulta SQL para actualizar campos
+    var setClause strings.Builder
+    for i, field := range field {
+        if i != 0 {
+            setClause.WriteString(", ")
+        }
+        setClause.WriteString(field)
+        setClause.WriteString(" = ?")
+    }
+
+    // Formar la consulta SQL completa
+    query := fmt.Sprintf("UPDATE patients SET %s WHERE id_patient = ?", setClause.String())
+
+    // Convertir los slices de strings en un slice de interfaces
+	var interfaceValues []interface{}
+	for _, v := range value {
+		interfaceValues = append(interfaceValues, v)
 	}
 
-	res, err := stmt.Exec(value, id)
+	// Concatenar el ID del dentista al final del slice de valores
+	interfaceValues = append(interfaceValues, id)
+
+	// Ejecutar la consulta SQL
+	res, err := s.db.Exec(query, interfaceValues...)
 	if err != nil {
-		return nil, err
+		return nil, errors.New("No se ha podido ejecutar la consulta")
 	}
+
 	rowsAffected, err := res.RowsAffected()
 	if err != nil {
 		return nil, err
 	} else if rowsAffected == 0 {
-		return nil, errors.New("ninguna fila fue cambiada")
+		return nil, errors.New("Ninguna fila fue cambiada")
 	}
 
 	updatedPatient, err := s.GetPatientById(id)

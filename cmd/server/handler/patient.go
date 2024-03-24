@@ -22,12 +22,18 @@ func NewPatientHandler(service patient.IService) *patientHandler {
 	}
 }
 
-func (h *patientHandler) Post() gin.HandlerFunc {
+func (h *patientHandler) CreatePatient() gin.HandlerFunc {
 	return func(c *gin.Context) { 
 		var patient domain.Patient
 		err := c.ShouldBindJSON(&patient)
 		if (err != nil) {
 			c.AbortWithStatusJSON(http.StatusBadRequest, web.NewBadRequestApiError("Datos del paciente mal ingresados"))
+			return
+		}
+
+		valid, _ := validateNotEmptyPatient(&patient)
+		if !valid {
+			c.AbortWithStatusJSON(http.StatusBadRequest, web.NewBadRequestApiError("Debe ingresar todos los datos requeridos"))
 			return
 		}
 
@@ -39,6 +45,23 @@ func (h *patientHandler) Post() gin.HandlerFunc {
 		
 		c.JSON(http.StatusOK, gin.H{"paciente" : patientResponse})
 	}
+}
+
+// validateNotEmpty valida que los campos no estén vacíos
+func validateNotEmptyPatient(patient *domain.Patient) (bool, error) {
+	switch {
+	case patient.FirstName == "":
+		return false, web.NewBadRequestApiError("el nombre del paciente no puede estar vacío")
+	case patient.LastName == "":
+		return false, web.NewBadRequestApiError("el apellido del paciente no puede estar vacío")
+	case patient.DNI == "":
+		return false, web.NewBadRequestApiError("el DNI del paciente no puede estar vacío")
+	case patient.Address == "":
+		return false, web.NewBadRequestApiError("la dirección del paciente no puede estar vacía")
+	case patient.RegistrationDate == "":
+		return false, web.NewBadRequestApiError("la fecha de alta del paciente no puede estar vacía")
+	}
+	return true, nil
 }
 
 func (h *patientHandler) GetPatientById() gin.HandlerFunc {
@@ -65,59 +88,62 @@ func (h *patientHandler) GetPatientById() gin.HandlerFunc {
 	}
 }
 
-func (h *patientHandler) Put() gin.HandlerFunc {
+func (h *patientHandler) UpdatePatient() gin.HandlerFunc {
 	return func(c *gin.Context) { 
 		var patient domain.Patient
 		if err := c.ShouldBindJSON(&patient); err != nil {
-			web.Failure(c, http.StatusBadRequest, web.NewBadRequestApiError("invalid JSON"))
+			c.AbortWithStatusJSON(http.StatusBadRequest, web.NewNotFoundApiError(fmt.Sprintf("JSON invalido")))
 			return
 	}
 	updatedPatient, err := h.service.UpdatePatient(patient)
 		if err != nil {
-			web.Failure(c, http.StatusInternalServerError, web.NewInternalServerApiError(err.Error()))
+			c.AbortWithStatusJSON(http.StatusInternalServerError, web.NewInternalServerApiError(err.Error()))
 			return
 		}
 
-		web.Success(c, http.StatusOK, updatedPatient)
+		c.JSON(http.StatusOK, gin.H{"paciente" : updatedPatient})
 	}
 }
 
-func (h *patientHandler) Patch() gin.HandlerFunc {
+func (h *patientHandler) UpdatePatientField() gin.HandlerFunc {
 	return func(c *gin.Context) { 
-		id := c.Param("id")
-		field := c.Param("field")
-		value := c.Param("value")
-
-		patientID, err := strconv.Atoi(id)
+		var patient domain.Patient
+		err := c.ShouldBindJSON(&patient)
 		if err != nil {
-			web.Failure(c, http.StatusBadRequest, web.NewBadRequestApiError("invalid patient ID"))
+			c.AbortWithStatusJSON(http.StatusBadRequest, web.NewNotFoundApiError(fmt.Sprintf("JSON invalido")))
 			return
 		}
 
-		updatedPatient, err := h.service.UpdatePatientField(patientID, field, value)
-		if err != nil {
-			web.Failure(c, http.StatusInternalServerError, web.NewInternalServerApiError(err.Error()))
+		_, errNotFound := h.service.GetPatientById(patient.ID)
+		if errNotFound != nil {
+			c.AbortWithStatusJSON(http.StatusBadRequest, web.NewNotFoundApiError(fmt.Sprintf("No existe el paciente con el id %d", patient.ID)))
 			return
 		}
 
-		web.Success(c, http.StatusOK, updatedPatient)
+		updatedPatient, err := h.service.UpdatePatientField(patient)
+		if err != nil {
+			c.AbortWithStatusJSON(http.StatusInternalServerError, web.NewInternalServerApiError(err.Error()))
+			return
+		}
+
+		c.JSON(http.StatusOK, gin.H{"paciente" : updatedPatient})
 	}
 }
 
-func (h *patientHandler) Delete() gin.HandlerFunc {
+func (h *patientHandler) DeletePatient() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		id := c.Param("id")
 		patientID, err := strconv.Atoi(id)
 		if err != nil {
-			web.Failure(c, http.StatusBadRequest, web.NewBadRequestApiError(" patiente con ID inválido"))
+			c.AbortWithStatusJSON(http.StatusBadRequest, web.NewNotFoundApiError(fmt.Sprintf("Ingrese un id valido")))
 			return
 		}
 
 		if err := h.service.DeletePatient(patientID); err != nil {
-			web.Failure(c, http.StatusInternalServerError, web.NewInternalServerApiError(err.Error()))
+			c.AbortWithStatusJSON(http.StatusInternalServerError, web.NewInternalServerApiError(err.Error()))
 			return
 		}
 
-		web.Success(c, http.StatusOK, gin.H{"message": "patiente borrado"})
+		c.JSON(http.StatusOK, gin.H{"message": "paciente borrado"})
 	}
 }
