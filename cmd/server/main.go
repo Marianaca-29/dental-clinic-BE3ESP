@@ -40,17 +40,17 @@ func main() {
 	dentists := r.Group("/dentists")
 	{
 		dentists.GET(":id", dentistHandler.GetByDentistID())
-		dentists.POST("", dentistHandler.Post())
+		dentists.POST("", dentistHandler.CreateDentist())
 		//Completar otros 
 	}
 	patients := r.Group("/patients")
 	{
 		
 		patients.GET(":id", patientHandler.GetPatientById())
-		patients.POST("", patientHandler.Post())
-		patients.PATCH(":id", patientHandler.Put())
-		patients.PUT(":id", patientHandler.Patch())
-		patients.DELETE(":id", patientHandler.Delete())
+		patients.POST("", patientHandler.CreatePatient())
+		patients.PATCH(":id", patientHandler.UpdatePatient())
+		patients.PUT(":id", patientHandler.UpdatePatientField())
+		patients.DELETE(":id", patientHandler.DeletePatient())
 		
 	}
 
