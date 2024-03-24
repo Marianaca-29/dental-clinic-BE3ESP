@@ -1,6 +1,8 @@
 package web
 
-import "net/http"
+import ( 
+	"net/http"
+)
 
 type ErrorApi struct {
 	Status int `json:"status"`
@@ -8,6 +10,9 @@ type ErrorApi struct {
 	Message string `json:"message"`
 }
 
+type response struct {
+	Data interface{} `json:"data"`
+}
 // retorna el mensaje de nuestro error
 func (e *ErrorApi) Error() string {
 	return e.Message
