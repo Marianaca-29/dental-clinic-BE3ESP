@@ -92,38 +92,41 @@ func (h *patientHandler) UpdatePatient() gin.HandlerFunc {
 	return func(c *gin.Context) { 
 		var patient domain.Patient
 		if err := c.ShouldBindJSON(&patient); err != nil {
-			web.Failure(c, http.StatusBadRequest, web.NewBadRequestApiError("invalid JSON"))
+			c.AbortWithStatusJSON(http.StatusBadRequest, web.NewNotFoundApiError(fmt.Sprintf("JSON invalido")))
 			return
 	}
 	updatedPatient, err := h.service.UpdatePatient(patient)
 		if err != nil {
-			web.Failure(c, http.StatusInternalServerError, web.NewInternalServerApiError(err.Error()))
+			c.AbortWithStatusJSON(http.StatusInternalServerError, web.NewInternalServerApiError(err.Error()))
 			return
 		}
 
-		web.Success(c, http.StatusOK, updatedPatient)
+		c.JSON(http.StatusOK, gin.H{"paciente" : updatedPatient})
 	}
 }
 
 func (h *patientHandler) UpdatePatientField() gin.HandlerFunc {
 	return func(c *gin.Context) { 
-		id := c.Param("id")
-		field := c.Param("field")
-		value := c.Param("value")
-
-		patientID, err := strconv.Atoi(id)
+		var patient domain.Patient
+		err := c.ShouldBindJSON(&patient)
 		if err != nil {
-			web.Failure(c, http.StatusBadRequest, web.NewBadRequestApiError("invalid patient ID"))
+			c.AbortWithStatusJSON(http.StatusBadRequest, web.NewNotFoundApiError(fmt.Sprintf("JSON invalido")))
 			return
 		}
 
-		updatedPatient, err := h.service.UpdatePatientField(patientID, field, value)
-		if err != nil {
-			web.Failure(c, http.StatusInternalServerError, web.NewInternalServerApiError(err.Error()))
+		_, errNotFound := h.service.GetPatientById(patient.ID)
+		if errNotFound != nil {
+			c.AbortWithStatusJSON(http.StatusBadRequest, web.NewNotFoundApiError(fmt.Sprintf("No existe el paciente con el id %d", patient.ID)))
 			return
 		}
 
-		web.Success(c, http.StatusOK, updatedPatient)
+		updatedPatient, err := h.service.UpdatePatientField(patient)
+		if err != nil {
+			c.AbortWithStatusJSON(http.StatusInternalServerError, web.NewInternalServerApiError(err.Error()))
+			return
+		}
+
+		c.JSON(http.StatusOK, gin.H{"paciente" : updatedPatient})
 	}
 }
 
@@ -132,15 +135,15 @@ func (h *patientHandler) DeletePatient() gin.HandlerFunc {
 		id := c.Param("id")
 		patientID, err := strconv.Atoi(id)
 		if err != nil {
-			web.Failure(c, http.StatusBadRequest, web.NewBadRequestApiError(" patiente con ID inválido"))
+			c.AbortWithStatusJSON(http.StatusBadRequest, web.NewNotFoundApiError(fmt.Sprintf("Ingrese un id valido")))
 			return
 		}
 
 		if err := h.service.DeletePatient(patientID); err != nil {
-			web.Failure(c, http.StatusInternalServerError, web.NewInternalServerApiError(err.Error()))
+			c.AbortWithStatusJSON(http.StatusInternalServerError, web.NewInternalServerApiError(err.Error()))
 			return
 		}
 
-		web.Success(c, http.StatusOK, gin.H{"message": "patiente borrado"})
+		c.JSON(http.StatusOK, gin.H{"message": "paciente borrado"})
 	}
 }

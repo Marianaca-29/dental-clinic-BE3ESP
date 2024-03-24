@@ -11,7 +11,7 @@ type Repository interface {
 	CreatePatient (patient domain.Patient) (*domain.Patient, error)
 	GetPatientById (id int) (*domain.Patient, error)
 	UpdatePatient (patient domain.Patient) (*domain.Patient, error)
-	UpdatePatientField (id int, field string, value string) (*domain.Patient, error)
+	UpdatePatientField (id int, field []string, value []string) (*domain.Patient, error)
 	DeletePatient (id int) (error)
 }
 
@@ -54,7 +54,7 @@ func (r *repository) UpdatePatient (patient domain.Patient) (*domain.Patient, er
 	return updatedPatient, nil
 }
 
-func (r *repository) UpdatePatientField (id int, field string, value string) (*domain.Patient, error){
+func (r *repository) UpdatePatientField (id int, field []string, value []string) (*domain.Patient, error){
 	updatedPatient, err := r.storage.UpdatePatientField(id, field, value)
     if err != nil {
         return nil, err

@@ -2,7 +2,7 @@ package dentist
 
 import (
 	"fmt"
-	
+
 	"DENTAL-CLINIC/internal/domain"
 	"DENTAL-CLINIC/pkg/store"
 	"DENTAL-CLINIC/pkg/web"
@@ -12,7 +12,7 @@ type Repository interface {
 	CreateDentist(d domain.Dentist) (*domain.Dentist, error)
 	GetDentistById(id int) (*domain.Dentist, error)
 	UpdateDentist(dentist domain.Dentist) (*domain.Dentist, error)
-	UpdateDentistField(id int, p domain.Dentist) (*domain.Dentist, error)
+	UpdateDentistField(id int, values []string, fields[]string) (*domain.Dentist, error)
 	DeleteDentist(id int) error
 }
 
@@ -49,11 +49,20 @@ func (r *repository) GetDentistById(id int) (*domain.Dentist, error) {
 }
 
 // Completar
-func (r *repository) UpdateDentist(dentist domain.Dentist) (*domain.Dentist, error) {
-	return nil, nil
+func (r *repository) UpdateDentist(d domain.Dentist) (*domain.Dentist, error) {
+	dentist, err := r.storage.UpdateDentist(d)
+	if err != nil {
+		return nil, err
+	}
+	return dentist, nil
 }
-func (r *repository) UpdateDentistField(id int, p domain.Dentist) (*domain.Dentist, error) {
-	return nil, nil
+
+func (r *repository) UpdateDentistField(id int, field []string, values []string) (*domain.Dentist, error) {
+	dentist, err := r.storage.UpdateDentistField(id, field, values)
+	if err != nil {
+		return nil, err
+	}
+	return dentist, nil
 }
 
 func (r *repository) DeleteDentist(id int) error {
