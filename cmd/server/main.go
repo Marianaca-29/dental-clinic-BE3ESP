@@ -6,16 +6,24 @@ import (
 	"DENTAL-CLINIC/internal/dentist"
 	"DENTAL-CLINIC/internal/patient"
 	"DENTAL-CLINIC/pkg/store"
+	"DENTAL-CLINIC/pkg/middleware"
+
 	"database/sql"
 	"log"
 
 	"github.com/gin-gonic/gin"
 	_ "github.com/go-sql-driver/mysql"
+	"github.com/joho/godotenv"
 )
 
 func main() {
 
-	db, err := sql.Open("mysql", "root:lmcpauli1@tcp(localhost:3306)/turnos_odontologia")
+	err := godotenv.Load(".env")
+	if err != nil {
+		log.Fatal("error al cargar el archivo .env")
+	}
+
+	db, err := sql.Open("mysql", "root:root@tcp(localhost:3306)/turnos_odontologia")
 	if err != nil {
 		log.Fatal(err)
 	} 
@@ -47,29 +55,29 @@ func main() {
 	dentists := r.Group("/dentists")
 	{
 		dentists.GET("getDentist/:id", dentistHandler.GetByDentistID())
-		dentists.POST("postDentist", dentistHandler.CreateDentist())
-		dentists.PUT("updateDentist", dentistHandler.UpdateDentist())
-		dentists.PATCH("updateDentistField", dentistHandler.UpdateDentistField())
-		dentists.DELETE("deleteDentist/:id", dentistHandler.DeleteDentist())
+		dentists.POST("postDentist", middleware.Authentication(), dentistHandler.CreateDentist())
+		dentists.PUT("updateDentist", middleware.Authentication(), dentistHandler.UpdateDentist())
+		dentists.PATCH("updateDentistField", middleware.Authentication(), dentistHandler.UpdateDentistField())
+		dentists.DELETE("deleteDentist/:id", middleware.Authentication(), dentistHandler.DeleteDentist())
 	}
 
 	patients := r.Group("/patients")
 	{
 		patients.GET("getPatient/:id", patientHandler.GetPatientById())
-		patients.POST("postPatient", patientHandler.CreatePatient())
-		patients.PATCH("updatePatientField", patientHandler.UpdatePatient())
-		patients.PUT("updatePatient", patientHandler.UpdatePatientField())
-		patients.DELETE("deletePatient/:id", patientHandler.DeletePatient())
+		patients.POST("postPatient", middleware.Authentication(), patientHandler.CreatePatient())
+		patients.PATCH("updatePatientField", middleware.Authentication(), patientHandler.UpdatePatient())
+		patients.PUT("updatePatient", middleware.Authentication(), patientHandler.UpdatePatientField())
+		patients.DELETE("deletePatient/:id", middleware.Authentication(), patientHandler.DeletePatient())
 	}
 
 	appointments := r.Group("/appointments")
 	{
 		appointments.GET("getAppointment/:id", appointmentHandler.GetAppointmentById())
-		appointments.POST("postAppointment", appointmentHandler.CreateAppointment())
-		appointments.PUT("updateAppointment", appointmentHandler.UpdateAppointment())
-		appointments.PATCH("updateAppointmentField", appointmentHandler.UpdateAppointmentField())
-		appointments.DELETE("deleteAppointment/:id", appointmentHandler.DeleteAppointment())
-		appointments.POST("postAppointmentDNILicense", appointmentHandler.CreateAppointmentByDNIAndLicense())
+		appointments.POST("postAppointment", middleware.Authentication(), appointmentHandler.CreateAppointment())
+		appointments.PUT("updateAppointment", middleware.Authentication(), appointmentHandler.UpdateAppointment())
+		appointments.PATCH("updateAppointmentField", middleware.Authentication(), appointmentHandler.UpdateAppointmentField())
+		appointments.DELETE("deleteAppointment/:id", middleware.Authentication(), appointmentHandler.DeleteAppointment())
+		appointments.POST("postAppointmentDNILicense", middleware.Authentication(), appointmentHandler.CreateAppointmentByDNIAndLicense())
 		appointments.GET("getByDNI", appointmentHandler.GetAppointmentsByDNI())
 	}
 	
