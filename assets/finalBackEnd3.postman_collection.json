@@ -1,0 +1,550 @@
+{
+	"info": {
+		"_postman_id": "cb7f21d6-eab8-40b4-b6b6-8634af826bed",
+		"name": "finalBackEnd3",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "29131553"
+	},
+	"item": [
+		{
+			"name": "final",
+			"item": [
+				{
+					"name": "dentist",
+					"item": [
+						{
+							"name": "create",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "TOKEN",
+										"value": "mariana-paulina",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"first_name\": \"Jose\",\r\n    \"last_name\": \"Lopez\",\r\n    \"license\": \"12345\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:8080/dentists/postDentist",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"dentists",
+										"postDentist"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "get",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:8080/dentists/getDentist/2",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"dentists",
+										"getDentist",
+										"2"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "put",
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "TOKEN",
+										"value": "mariana-paulina",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"id\": 2,\r\n    \"first_name\": \"Pedro\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:8080/dentists/updateDentist",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"dentists",
+										"updateDentist"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "patch",
+							"request": {
+								"method": "PATCH",
+								"header": [
+									{
+										"key": "TOKEN",
+										"value": "mariana-paulina",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"id\": 2,\r\n    \"first_name\": \"Jose\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:8080/dentists/updateDentistField",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"dentists",
+										"updateDentistField"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "delete",
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "TOKEN",
+										"value": "mariana-paulina",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "http://localhost:8080/dentists/deleteDentist/2",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"dentists",
+										"deleteDentist",
+										"2"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "patient",
+					"item": [
+						{
+							"name": "create",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "TOKEN",
+										"value": "mariana-paulina",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"last_name\": \"Gonzalez\",\r\n    \"first_name\": \"Maria\",\r\n    \"address\": \"123 Main St\",\r\n    \"dni\": \"123456789\",\r\n    \"registration_date\": \"2022-03-31\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:8080/patients/postPatient",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"patients",
+										"postPatient"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "get",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:8080/patients/getPatient/2",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"patients",
+										"getPatient",
+										"2"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "put",
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "TOKEN",
+										"value": "mariana-paulina",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"id\": 2,\r\n    \"last_name\": \"Gonzalez\",\r\n    \"first_name\": \"Maria\",\r\n    \"address\": \"Calle Principal 123\",\r\n    \"dni\": \"123456789\",\r\n    \"registration_date\": \"2022-03-31\"\r\n}\r\n",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:8080/patients/updatePatient",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"patients",
+										"updatePatient"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "patch",
+							"request": {
+								"method": "PATCH",
+								"header": [
+									{
+										"key": "TOKEN",
+										"value": "mariana-paulina",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"id\" : 2,\r\n    \"first_name\": \"Maria Sofia\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:8080/patients/updatePatientField",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"patients",
+										"updatePatientField"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "delete",
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "TOKEN",
+										"value": "mariana-paulina",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "http://localhost:8080/patients/deletePatient/2",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"patients",
+										"deletePatient",
+										"2"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "appointment",
+					"item": [
+						{
+							"name": "create",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "TOKEN",
+										"value": "mariana-paulina",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"id_patient\": 2,\r\n    \"id_dentist\": 2,\r\n    \"date\": \"2024-03-25\",\r\n    \"time\": \"10:00 AM\",\r\n    \"description\": \"Consulta de rutina\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:8080/appointments/postAppointment",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"appointments",
+										"postAppointment"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "createDL",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "TOKEN",
+										"value": "mariana-paulina",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"dni\": \"123456789\",\r\n    \"license\": \"12345\",\r\n    \"date\": \"2024-03-25\",\r\n    \"time\": \"10:00 AM\",\r\n    \"description\": \"Consulta de rutina\"\r\n}\r\n",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:8080/appointments/postAppointmentDNILicense",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"appointments",
+										"postAppointmentDNILicense"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "getDNI",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:8080/appointments/getByDNI?dni=123456789",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"appointments",
+										"getByDNI"
+									],
+									"query": [
+										{
+											"key": "dni",
+											"value": "123456789"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "get",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:8080/appointments/getAppointment/7",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"appointments",
+										"getAppointment",
+										"7"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "put",
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "TOKEN",
+										"value": "mariana-paulina",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"id\":5,\r\n    \"description\": \"Consulta de urgencia\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:8080/appointments/updateAppointment",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"appointments",
+										"updateAppointment"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "patch",
+							"request": {
+								"method": "PATCH",
+								"header": [
+									{
+										"key": "TOKEN",
+										"value": "mariana-paulina",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"id\":5,\r\n    \"description\": \"Consulta de cirugia\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:8080/appointments/updateAppointmentField",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"appointments",
+										"updateAppointmentField"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "delete",
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "TOKEN",
+										"value": "mariana-paulina",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "http://localhost:8080/appointments/deleteAppointment/6",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"appointments",
+										"deleteAppointment",
+										"6"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		}
+	]
+}
