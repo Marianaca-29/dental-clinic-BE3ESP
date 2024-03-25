@@ -73,11 +73,11 @@ func main() {
 	appointments := r.Group("/appointments")
 	{
 		appointments.GET("getAppointment/:id", appointmentHandler.GetAppointmentById())
-		appointments.POST("postAppointment", appointmentHandler.CreateAppointment())
-		appointments.PUT("updateAppointment", appointmentHandler.UpdateAppointment())
-		appointments.PATCH("updateAppointmentField", appointmentHandler.UpdateAppointmentField())
-		appointments.DELETE("deleteAppointment/:id", appointmentHandler.DeleteAppointment())
-		appointments.POST("postAppointmentDNILicense", appointmentHandler.CreateAppointmentByDNIAndLicense())
+		appointments.POST("postAppointment", middleware.Authentication(), appointmentHandler.CreateAppointment())
+		appointments.PUT("updateAppointment", middleware.Authentication(), appointmentHandler.UpdateAppointment())
+		appointments.PATCH("updateAppointmentField", middleware.Authentication(), appointmentHandler.UpdateAppointmentField())
+		appointments.DELETE("deleteAppointment/:id", middleware.Authentication(), appointmentHandler.DeleteAppointment())
+		appointments.POST("postAppointmentDNILicense", middleware.Authentication(), appointmentHandler.CreateAppointmentByDNIAndLicense())
 		appointments.GET("getByDNI", appointmentHandler.GetAppointmentsByDNI())
 	}
 	
