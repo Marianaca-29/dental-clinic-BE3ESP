@@ -16,6 +16,14 @@ import (
 	"github.com/joho/godotenv"
 )
 
+// @title DENTAL-CLINIC PAULANA'S OFFICE -  API DOCUMENTATION
+// @version 1.0
+// @description This API handles appointments with patients and dentists data.
+// @termsOfService https://developers.ctd.com.ar/es_ar/terminos-y-condiciones
+// @contact.name Paulina Oberti Busso (paulinaobertibusso@gmail.com)- Mariana Cañas (mariana.famaf@gmail.com) 
+// @contact.url https://developers.ctd.com.ar/support
+// @license.name Apache 2.0
+// @license.url http://www.apache.org/licenses/LICENSE-2.0.html
 func main() {
 
 	err := godotenv.Load(".env")
