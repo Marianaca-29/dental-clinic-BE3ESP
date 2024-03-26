@@ -1,0 +1,621 @@
+definitions:
+  domain.Appointment:
+    description: Appointment information
+    properties:
+      date:
+        type: string
+      description:
+        type: string
+      id:
+        type: integer
+      id_dentist:
+        type: integer
+      id_patient:
+        type: integer
+      time:
+        type: string
+    type: object
+  domain.AppointmentData:
+    description: AppointmentData information
+    properties:
+      date:
+        type: string
+      description:
+        type: string
+      dni:
+        type: string
+      license:
+        type: string
+      time:
+        type: string
+    type: object
+  domain.Dentist:
+    description: Dentist information including ID, first name, last name, and license
+      number.
+    properties:
+      first_name:
+        type: string
+      id:
+        type: integer
+      last_name:
+        type: string
+      license:
+        type: string
+    type: object
+  domain.Patient:
+    description: Patient information including ID, last name, first name, address,
+      DNI, and registration date.
+    properties:
+      address:
+        type: string
+      dni:
+        type: string
+      first_name:
+        type: string
+      id:
+        type: integer
+      last_name:
+        type: string
+      registration_date:
+        type: string
+    type: object
+  gin.H:
+    additionalProperties: {}
+    type: object
+  web.ErrorApi:
+    properties:
+      code:
+        type: string
+      message:
+        type: string
+      status:
+        type: integer
+    type: object
+info:
+  contact:
+    name: Paulina Oberti Busso (paulinaobertibusso@gmail.com)- Mariana Cañas (mariana.famaf@gmail.com)
+    url: https://developers.ctd.com.ar/support
+  description: This API handles appointments with patients and dentists data.
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  termsOfService: https://developers.ctd.com.ar/es_ar/terminos-y-condiciones
+  title: DENTAL-CLINIC PAULANA'S OFFICE -  API DOCUMENTATION
+  version: "1.0"
+paths:
+  /appointments:
+    patch:
+      consumes:
+      - application/json
+      description: Update a specific field of an appointment's data with the provided
+        data
+      parameters:
+      - description: token
+        in: header
+        name: token
+        required: true
+        type: string
+      - description: Updated appointment field data
+        in: body
+        name: appointment
+        required: true
+        schema:
+          $ref: '#/definitions/domain.Appointment'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Returns the updated appointment
+          schema:
+            $ref: '#/definitions/domain.Appointment'
+        "400":
+          description: Bad request
+          schema:
+            $ref: '#/definitions/web.ErrorApi'
+        "404":
+          description: Not found
+          schema:
+            $ref: '#/definitions/web.ErrorApi'
+      summary: Update a specific field of an appointment
+    post:
+      consumes:
+      - application/json
+      description: Create a new appointment with the provided data
+      parameters:
+      - description: token
+        in: header
+        name: token
+        required: true
+        type: string
+      - description: Appointment data
+        in: body
+        name: appointment
+        required: true
+        schema:
+          $ref: '#/definitions/domain.Appointment'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Returns the created appointment
+          schema:
+            $ref: '#/definitions/domain.Appointment'
+        "400":
+          description: Bad request
+          schema:
+            $ref: '#/definitions/web.ErrorApi'
+      summary: Create a new appointment
+    put:
+      consumes:
+      - application/json
+      description: Update an appointment's data with the provided data
+      parameters:
+      - description: token
+        in: header
+        name: token
+        required: true
+        type: string
+      - description: Updated appointment data
+        in: body
+        name: appointment
+        required: true
+        schema:
+          $ref: '#/definitions/domain.Appointment'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Returns the updated appointment
+          schema:
+            $ref: '#/definitions/domain.Appointment'
+        "400":
+          description: Bad request
+          schema:
+            $ref: '#/definitions/web.ErrorApi'
+        "404":
+          description: Not found
+          schema:
+            $ref: '#/definitions/web.ErrorApi'
+      summary: Update an appointment
+  /appointments/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete an appointment by its ID
+      parameters:
+      - description: token
+        in: header
+        name: token
+        required: true
+        type: string
+      - description: Appointment ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{''message'': ''Appointment deleted''}'
+          schema:
+            $ref: '#/definitions/gin.H'
+        "400":
+          description: Bad request
+          schema:
+            $ref: '#/definitions/web.ErrorApi'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/web.ErrorApi'
+      summary: Delete an appointment
+    get:
+      consumes:
+      - application/json
+      description: Retrieve appointment's data by their ID
+      parameters:
+      - description: token
+        in: header
+        name: token
+        required: true
+        type: string
+      - description: Appointment ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Returns the requested appointment
+          schema:
+            $ref: '#/definitions/domain.Appointment'
+        "400":
+          description: Bad request
+          schema:
+            $ref: '#/definitions/web.ErrorApi'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/web.ErrorApi'
+      summary: Get appointment by ID
+  /appointments/dni:
+    get:
+      consumes:
+      - application/json
+      description: Retrieve appointments by patient's DNI
+      parameters:
+      - description: token
+        in: header
+        name: token
+        required: true
+        type: string
+      - description: Patient's DNI
+        in: query
+        name: dni
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{''turnos'': ''Appointments''}'
+          schema:
+            $ref: '#/definitions/gin.H'
+        "400":
+          description: Bad request
+          schema:
+            $ref: '#/definitions/web.ErrorApi'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/web.ErrorApi'
+      summary: Get appointments by DNI
+  /appointments/dni-license:
+    post:
+      consumes:
+      - application/json
+      description: Create appointment by patient's DNI and dentist's license with
+        the provided data
+      parameters:
+      - description: token
+        in: header
+        name: token
+        required: true
+        type: string
+      - description: Appointment data including patient's DNI and dentist's license
+        in: body
+        name: appointmentData
+        required: true
+        schema:
+          $ref: '#/definitions/domain.AppointmentData'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{''turnos'': ''Appointments created''}'
+          schema:
+            $ref: '#/definitions/gin.H'
+        "400":
+          description: Bad request
+          schema:
+            $ref: '#/definitions/web.ErrorApi'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/web.ErrorApi'
+      summary: Create appointment by DNI and License
+  /dentists:
+    patch:
+      consumes:
+      - application/json
+      description: Update a specific field of a dentist's data with the provided data
+      parameters:
+      - description: token
+        in: header
+        name: token
+        required: true
+        type: string
+      - description: Updated dentist field data
+        in: body
+        name: dentist
+        required: true
+        schema:
+          $ref: '#/definitions/domain.Dentist'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Returns the updated dentist
+          schema:
+            $ref: '#/definitions/domain.Dentist'
+        "400":
+          description: Bad request
+          schema:
+            $ref: '#/definitions/web.ErrorApi'
+        "404":
+          description: Not found
+          schema:
+            $ref: '#/definitions/web.ErrorApi'
+      summary: Update a specific field of a dentist
+    post:
+      consumes:
+      - application/json
+      description: Create a new dentist with the provided data
+      parameters:
+      - description: token
+        in: header
+        name: token
+        required: true
+        type: string
+      - description: Dentist data
+        in: body
+        name: dentist
+        required: true
+        schema:
+          $ref: '#/definitions/domain.Dentist'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Returns the created dentist
+          schema:
+            $ref: '#/definitions/domain.Dentist'
+        "400":
+          description: Bad request
+          schema:
+            $ref: '#/definitions/web.ErrorApi'
+      summary: Create a new dentist
+    put:
+      consumes:
+      - application/json
+      description: Update a dentist's data with the provided data
+      parameters:
+      - description: token
+        in: header
+        name: token
+        required: true
+        type: string
+      - description: Updated dentist data
+        in: body
+        name: dentist
+        required: true
+        schema:
+          $ref: '#/definitions/domain.Dentist'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Returns the updated dentist
+          schema:
+            $ref: '#/definitions/domain.Dentist'
+        "400":
+          description: Bad request
+          schema:
+            $ref: '#/definitions/web.ErrorApi'
+        "404":
+          description: Not found
+          schema:
+            $ref: '#/definitions/web.ErrorApi'
+      summary: Update a dentist
+  /dentists/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete a dentist by their ID
+      parameters:
+      - description: token
+        in: header
+        name: token
+        required: true
+        type: string
+      - description: Dentist ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{''message'': ''Dentist deleted''}'
+          schema:
+            $ref: '#/definitions/gin.H'
+        "400":
+          description: Bad request
+          schema:
+            $ref: '#/definitions/web.ErrorApi'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/web.ErrorApi'
+      summary: Delete a dentist
+    get:
+      consumes:
+      - application/json
+      description: Retrieve dentist's data by their ID
+      parameters:
+      - description: token
+        in: header
+        name: token
+        required: true
+        type: string
+      - description: Dentist ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Returns the requested dentist
+          schema:
+            $ref: '#/definitions/domain.Dentist'
+        "400":
+          description: Bad request
+          schema:
+            $ref: '#/definitions/web.ErrorApi'
+        "404":
+          description: Not found
+          schema:
+            $ref: '#/definitions/web.ErrorApi'
+      summary: Get dentist by ID
+  /patients:
+    patch:
+      consumes:
+      - application/json
+      description: Update a specific field of a patient's data with the provided data
+      parameters:
+      - description: token
+        in: header
+        name: token
+        required: true
+        type: string
+      - description: Updated patient field data
+        in: body
+        name: patient
+        required: true
+        schema:
+          $ref: '#/definitions/domain.Patient'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Returns the updated patient
+          schema:
+            $ref: '#/definitions/domain.Patient'
+        "400":
+          description: Bad request
+          schema:
+            $ref: '#/definitions/web.ErrorApi'
+        "404":
+          description: Not found
+          schema:
+            $ref: '#/definitions/web.ErrorApi'
+      summary: Update a specific field of a patient
+    post:
+      consumes:
+      - application/json
+      description: Create a new patient with the provided data
+      parameters:
+      - description: token
+        in: header
+        name: token
+        required: true
+        type: string
+      - description: Patient data
+        in: body
+        name: patient
+        required: true
+        schema:
+          $ref: '#/definitions/domain.Patient'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Returns the created patient
+          schema:
+            $ref: '#/definitions/domain.Patient'
+        "400":
+          description: Bad request
+          schema:
+            $ref: '#/definitions/web.ErrorApi'
+      summary: Create a new patient
+    put:
+      consumes:
+      - application/json
+      description: Update a patient's data with the provided data
+      parameters:
+      - description: token
+        in: header
+        name: token
+        required: true
+        type: string
+      - description: Updated patient data
+        in: body
+        name: patient
+        required: true
+        schema:
+          $ref: '#/definitions/domain.Patient'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Returns the updated patient
+          schema:
+            $ref: '#/definitions/domain.Patient'
+        "400":
+          description: Bad request
+          schema:
+            $ref: '#/definitions/web.ErrorApi'
+        "404":
+          description: Not found
+          schema:
+            $ref: '#/definitions/web.ErrorApi'
+      summary: Update a patient
+  /patients/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete a patient by their ID
+      parameters:
+      - description: token
+        in: header
+        name: token
+        required: true
+        type: string
+      - description: Patient ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{''message'': ''Patient deleted''}'
+          schema:
+            $ref: '#/definitions/gin.H'
+        "400":
+          description: Bad request
+          schema:
+            $ref: '#/definitions/web.ErrorApi'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/web.ErrorApi'
+      summary: Delete a patient
+    get:
+      consumes:
+      - application/json
+      description: Retrieve a patient's data by their ID
+      parameters:
+      - description: token
+        in: header
+        name: token
+        required: true
+        type: string
+      - description: Patient ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Returns the requested patient
+          schema:
+            $ref: '#/definitions/domain.Patient'
+        "400":
+          description: Bad request
+          schema:
+            $ref: '#/definitions/web.ErrorApi'
+        "404":
+          description: Not found
+          schema:
+            $ref: '#/definitions/web.ErrorApi'
+      summary: Get a patient by ID
+swagger: "2.0"
