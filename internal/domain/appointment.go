@@ -1,6 +1,8 @@
 package domain
 
-// Registrar dentista, paciente, fecha, hora y descripcion de los mismos
+// Appointment represents information about appointments 
+// @Summary Appointment information
+// @Description Appointment information
 type Appointment struct {
 	ID          int    `json:"id"`
 	IdPatient   int    `json:"id_patient"`
@@ -10,6 +12,8 @@ type Appointment struct {
 	Description string `json:"description"`
 }
 
+// @Summary AppointmentData information
+// @Description AppointmentData information
 type AppointmentData struct {
 	DNI         string `json:"dni"`
 	License     string `json:"license"`

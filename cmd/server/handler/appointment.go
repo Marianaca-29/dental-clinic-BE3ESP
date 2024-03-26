@@ -20,6 +20,16 @@ func NewAppointmentHandler(service appointment.IService) *AppointmentHandler {
 	return &AppointmentHandler{Service: service}
 }
 
+// CreateAppointment godoc
+// @Summary Create a new appointment
+// @Description Create a new appointment with the provided data
+// @Accept json
+// @Produce json
+// @Param token header string true "token"
+// @Param appointment body domain.Appointment true "Appointment data"
+// @Success 201 {object} domain.Appointment "Returns the created appointment"
+// @Failure 400 {object} web.ErrorApi "Bad request"
+// @Router /appointments [post]
 func (h *AppointmentHandler) CreateAppointment() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var appointment domain.Appointment
@@ -62,6 +72,17 @@ func validateNotEmptyAppointment(appointment *domain.Appointment) (bool, error) 
 	return true, nil
 }
 
+// GetAppointmentById godoc
+// @Summary Get appointment by ID
+// @Description Retrieve appointment's data by their ID
+// @Accept json
+// @Produce json
+// @Param token header string true "token"
+// @Param id path int true "Appointment ID"
+// @Success 200 {object} domain.Appointment "Returns the requested appointment"
+// @Failure 400 {object} web.ErrorApi "Bad request"
+// @Failure 500 {object} web.ErrorApi "Internal server error"
+// @Router /appointments/{id} [get]
 func (h *AppointmentHandler) GetAppointmentById() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		id := c.Param("id")
@@ -81,6 +102,17 @@ func (h *AppointmentHandler) GetAppointmentById() gin.HandlerFunc {
 	}
 }
 
+// UpdateAppointment godoc
+// @Summary Update an appointment
+// @Description Update an appointment's data with the provided data
+// @Accept json
+// @Produce json
+// @Param token header string true "token"
+// @Param appointment body domain.Appointment true "Updated appointment data"
+// @Success 200 {object} domain.Appointment "Returns the updated appointment"
+// @Failure 400 {object} web.ErrorApi "Bad request"
+// @Failure 404 {object} web.ErrorApi "Not found"
+// @Router /appointments [put]
 func (h *AppointmentHandler) UpdateAppointment() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var appointment domain.Appointment
@@ -105,6 +137,17 @@ func (h *AppointmentHandler) UpdateAppointment() gin.HandlerFunc {
 	}
 }
 
+// UpdateAppointmentField godoc
+// @Summary Update a specific field of an appointment
+// @Description Update a specific field of an appointment's data with the provided data
+// @Accept json
+// @Produce json
+// @Param token header string true "token"
+// @Param appointment body domain.Appointment true "Updated appointment field data"
+// @Success 200 {object} domain.Appointment "Returns the updated appointment"
+// @Failure 400 {object} web.ErrorApi "Bad request"
+// @Failure 404 {object} web.ErrorApi "Not found"
+// @Router /appointments [patch]
 func (h *AppointmentHandler) UpdateAppointmentField() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var appointment domain.Appointment
@@ -130,6 +173,17 @@ func (h *AppointmentHandler) UpdateAppointmentField() gin.HandlerFunc {
 	}
 }
 
+// DeleteAppointment godoc
+// @Summary Delete an appointment
+// @Description Delete an appointment by its ID
+// @Accept json
+// @Produce json
+// @Param token header string true "token"
+// @Param id path int true "Appointment ID"
+// @Success 200 {object} gin.H "{'message': 'Appointment deleted'}"
+// @Failure 400 {object} web.ErrorApi "Bad request"
+// @Failure 500 {object} web.ErrorApi "Internal server error"
+// @Router /appointments/{id} [delete]
 func (h *AppointmentHandler) DeleteAppointment() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		id := c.Param("id")
@@ -149,6 +203,17 @@ func (h *AppointmentHandler) DeleteAppointment() gin.HandlerFunc {
 	}
 }
 
+// CreateAppointmentByDNIAndLicense godoc
+// @Summary Create appointment by DNI and License
+// @Description Create appointment by patient's DNI and dentist's license with the provided data
+// @Accept json
+// @Produce json
+// @Param token header string true "token"
+// @Param appointmentData body domain.AppointmentData true "Appointment data including patient's DNI and dentist's license"
+// @Success 200 {object} gin.H "{'turnos': 'Appointments created'}"
+// @Failure 400 {object} web.ErrorApi "Bad request"
+// @Failure 500 {object} web.ErrorApi "Internal server error"
+// @Router /appointments/dni-license [post]
 func (h *AppointmentHandler) CreateAppointmentByDNIAndLicense() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var appointmentData domain.AppointmentData
@@ -191,6 +256,17 @@ func validateNotEmptyAppointmentDNILicense(appointment *domain.AppointmentData) 
 	return true, nil
 }
 
+// GetAppointmentsByDNI godoc
+// @Summary Get appointments by DNI
+// @Description Retrieve appointments by patient's DNI
+// @Accept json
+// @Produce json
+// @Param token header string true "token"
+// @Param dni query string true "Patient's DNI"
+// @Success 200 {object} gin.H "{'turnos': 'Appointments'}"
+// @Failure 400 {object} web.ErrorApi "Bad request"
+// @Failure 500 {object} web.ErrorApi "Internal server error"
+// @Router /appointments/dni [get]
 func (h *AppointmentHandler) GetAppointmentsByDNI() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		DNI := c.Query("dni")

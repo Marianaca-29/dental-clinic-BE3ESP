@@ -88,7 +88,6 @@ func main() {
 		appointments.POST("postAppointmentDNILicense", middleware.Authentication(), appointmentHandler.CreateAppointmentByDNIAndLicense())
 		appointments.GET("getByDNI", appointmentHandler.GetAppointmentsByDNI())
 	}
-	
 
 	r.Run(":8080")
 }
