@@ -35,7 +35,7 @@ func main() {
 		log.Fatal("error al cargar el archivo .env")
 	}
 
-	db, err := sql.Open("mysql", "root:lmcpauli1@tcp(localhost:3306)/turnos_odontologia")
+	db, err := sql.Open("mysql", "root:root@tcp(localhost:3306)/turnos_odontologia")
 	if err != nil {
 		log.Fatal(err)
 	} 
