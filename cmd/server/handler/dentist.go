@@ -21,6 +21,17 @@ func NewDentistHandler(service dentist.IService) *dentistHandler {
 	}
 }
 
+// GetByDentistID godoc
+// @Summary Get dentist by ID
+// @Description Retrieve dentist's data by their ID
+// @Accept json
+// @Produce json
+// @Param token header string true "token"
+// @Param id path int true "Dentist ID"
+// @Success 200 {object} domain.Dentist "Returns the requested dentist"
+// @Failure 400 {object} web.ErrorApi "Bad request"
+// @Failure 404 {object} web.ErrorApi "Not found"
+// @Router /dentists/{id} [get]
 func (h *dentistHandler) GetByDentistID() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		idParam := c.Param("id")
@@ -51,7 +62,16 @@ func validateNotEmptyDentist(dentist *domain.Dentist) (bool, error) {
 	return true, nil
 }
 
-// Post crea un nuevo dentista
+// CreateDentist godoc
+// @Summary Create a new dentist
+// @Description Create a new dentist with the provided data
+// @Accept json
+// @Produce json
+// @Param token header string true "token"
+// @Param dentist body domain.Dentist true "Dentist data"
+// @Success 201 {object} domain.Dentist "Returns the created dentist"
+// @Failure 400 {object} web.ErrorApi "Bad request"
+// @Router /dentists [post]
 func (h *dentistHandler) CreateDentist() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var dentist domain.Dentist
@@ -75,7 +95,17 @@ func (h *dentistHandler) CreateDentist() gin.HandlerFunc {
 	}
 }
 
-// Put actualiza un dentista
+// UpdateDentist godoc
+// @Summary Update a dentist
+// @Description Update a dentist's data with the provided data
+// @Accept json
+// @Produce json
+// @Param token header string true "token"
+// @Param dentist body domain.Dentist true "Updated dentist data"
+// @Success 200 {object} domain.Dentist "Returns the updated dentist"
+// @Failure 400 {object} web.ErrorApi "Bad request"
+// @Failure 404 {object} web.ErrorApi "Not found"
+// @Router /dentists [put]
 func (h *dentistHandler) UpdateDentist() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var dentist domain.Dentist
@@ -101,7 +131,17 @@ func (h *dentistHandler) UpdateDentist() gin.HandlerFunc {
 	}
 }
 
-// Patch actualiza un dentista o alguno de sus campos
+// UpdateDentistField godoc
+// @Summary Update a specific field of a dentist
+// @Description Update a specific field of a dentist's data with the provided data
+// @Accept json
+// @Produce json
+// @Param token header string true "token"
+// @Param dentist body domain.Dentist true "Updated dentist field data"
+// @Success 200 {object} domain.Dentist "Returns the updated dentist"
+// @Failure 400 {object} web.ErrorApi "Bad request"
+// @Failure 404 {object} web.ErrorApi "Not found"
+// @Router /dentists [patch]
 func (h *dentistHandler) UpdateDentistField() gin.HandlerFunc {
 	return func(c *gin.Context) { 
 		var dentist domain.Dentist
@@ -127,7 +167,17 @@ func (h *dentistHandler) UpdateDentistField() gin.HandlerFunc {
 	}
 }
 
-// Delete elimina un dentista
+// DeleteDentist godoc
+// @Summary Delete a dentist
+// @Description Delete a dentist by their ID
+// @Accept json
+// @Produce json
+// @Param token header string true "token"
+// @Param id path int true "Dentist ID"
+// @Success 200 {object} gin.H "{'message': 'Dentist deleted'}"
+// @Failure 400 {object} web.ErrorApi "Bad request"
+// @Failure 500 {object} web.ErrorApi "Internal server error"
+// @Router /dentists/{id} [delete]
 func (h *dentistHandler) DeleteDentist() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		id := c.Param("id")

@@ -1,21 +1,33 @@
 package main
 
 import (
+	"DENTAL-CLINIC/cmd/server/docs"
 	"DENTAL-CLINIC/cmd/server/handler"
 	"DENTAL-CLINIC/internal/appointment"
 	"DENTAL-CLINIC/internal/dentist"
 	"DENTAL-CLINIC/internal/patient"
-	"DENTAL-CLINIC/pkg/store"
 	"DENTAL-CLINIC/pkg/middleware"
+	"DENTAL-CLINIC/pkg/store"
 
 	"database/sql"
 	"log"
+	"os"
 
 	"github.com/gin-gonic/gin"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/joho/godotenv"
+	swaggerFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
+// @title DENTAL-CLINIC PAULANA'S OFFICE -  API DOCUMENTATION
+// @version 1.0
+// @description This API handles appointments with patients and dentists data.
+// @termsOfService https://developers.ctd.com.ar/es_ar/terminos-y-condiciones
+// @contact.name Paulina Oberti Busso (paulinaobertibusso@gmail.com)- Mariana Cañas (mariana.famaf@gmail.com)
+// @contact.url https://developers.ctd.com.ar/support
+// @license.name Apache 2.0
+// @license.url http://www.apache.org/licenses/LICENSE-2.0.html
 func main() {
 
 	err := godotenv.Load(".env")
@@ -23,7 +35,7 @@ func main() {
 		log.Fatal("error al cargar el archivo .env")
 	}
 
-	db, err := sql.Open("mysql", "root:root@tcp(localhost:3306)/turnos_odontologia")
+	db, err := sql.Open("mysql", "root:Mariana1234$@tcp(localhost:3306)/turnos_odontologia")
 	if err != nil {
 		log.Fatal(err)
 	} 
@@ -49,6 +61,8 @@ func main() {
 	appointmentHandler := handler.NewAppointmentHandler(appointmentService)
 	
 	r := gin.Default()
+	docs.SwaggerInfo.Host =  os.Getenv("HOST") 	
+	r.GET("/docs/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
 	r.GET("/ping", func(c *gin.Context) { c.String(200, "pong") })
 
@@ -80,7 +94,6 @@ func main() {
 		appointments.POST("postAppointmentDNILicense", middleware.Authentication(), appointmentHandler.CreateAppointmentByDNIAndLicense())
 		appointments.GET("getByDNI", appointmentHandler.GetAppointmentsByDNI())
 	}
-	
 
 	r.Run(":8080")
 }

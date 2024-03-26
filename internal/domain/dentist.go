@@ -1,6 +1,8 @@
 package domain
 
-// Registrar apellido, nombre y matrícula de los mismos
+// Dentist represents information about a dentist.
+// @Summary Dentist information
+// @Description Dentist information including ID, first name, last name, and license number.
 type Dentist struct {
 	ID        int    `json:"id"`
     FirstName string `json:"first_name"`
